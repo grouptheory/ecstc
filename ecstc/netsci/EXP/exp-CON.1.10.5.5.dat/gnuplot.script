@@ -1,0 +1,6 @@
+set terminal png
+set output "output.png"
+set xlabel "Actual Constraint"
+set ylabel "Estimated Constraint"
+set title "Estimating Constraint w/ Biased RDS/Completions (1k trs x 1k cmps)"
+plot "output.10.5.5-final" using 3:4 title "r = 0.93177"

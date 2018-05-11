@@ -1,0 +1,6 @@
+set terminal postscript portrait noenhanced monochrome
+set output "output.ps"
+set xlabel "actual betweenness centrality"
+set ylabel "estimated betweenness centrality"
+set title "10.50.50"
+plot "output.10.50.50-2500" using 3:4 title "10.50.50.dat"

@@ -1,0 +1,4490 @@
+%!PS-Adobe-3.0
+%%BoundingBox: 38 24 574 768
+%%Title: Enscript Output
+%%For: Bilal Khan
+%%Creator: GNU enscript 1.6.4
+%%CreationDate: Tue Nov 11 18:10:37 2008
+%%Orientation: Portrait
+%%Pages: (atend)
+%%DocumentMedia: Letter 612 792 0 () ()
+%%DocumentNeededResources: (atend)
+%%EndComments
+%%BeginProlog
+%%BeginResource: procset Enscript-Prolog 1.6 4
+%
+% Procedures.
+%
+
+/_S {	% save current state
+  /_s save def
+} def
+/_R {	% restore from saved state
+  _s restore
+} def
+
+/S {	% showpage protecting gstate
+  gsave
+  showpage
+  grestore
+} bind def
+
+/MF {	% fontname newfontname -> -	make a new encoded font
+  /newfontname exch def
+  /fontname exch def
+
+  /fontdict fontname findfont def
+  /newfont fontdict maxlength dict def
+
+  fontdict {
+    exch
+    dup /FID eq {
+      % skip FID pair
+      pop pop
+    } {
+      % copy to the new font dictionary
+      exch newfont 3 1 roll put
+    } ifelse
+  } forall
+
+  newfont /FontName newfontname put
+
+  % insert only valid encoding vectors
+  encoding_vector length 256 eq {
+    newfont /Encoding encoding_vector put
+  } if
+
+  newfontname newfont definefont pop
+} def
+
+/MF_PS { % fontname newfontname -> -	make a new font preserving its enc
+  /newfontname exch def
+  /fontname exch def
+
+  /fontdict fontname findfont def
+  /newfont fontdict maxlength dict def
+
+  fontdict {
+    exch
+    dup /FID eq {
+      % skip FID pair
+      pop pop
+    } {
+      % copy to the new font dictionary
+      exch newfont 3 1 roll put
+    } ifelse
+  } forall
+
+  newfont /FontName newfontname put
+
+  newfontname newfont definefont pop
+} def
+
+/SF { % fontname width height -> -	set a new font
+  /height exch def
+  /width exch def
+
+  findfont
+  [width 0 0 height 0 0] makefont setfont
+} def
+
+/SUF { % fontname width height -> -	set a new user font
+  /height exch def
+  /width exch def
+
+  /F-gs-user-font MF
+  /F-gs-user-font width height SF
+} def
+
+/SUF_PS { % fontname width height -> -	set a new user font preserving its enc
+  /height exch def
+  /width exch def
+
+  /F-gs-user-font MF_PS
+  /F-gs-user-font width height SF
+} def
+
+/M {moveto} bind def
+/s {show} bind def
+
+/Box {	% x y w h -> -			define box path
+  /d_h exch def /d_w exch def /d_y exch def /d_x exch def
+  d_x d_y  moveto
+  d_w 0 rlineto
+  0 d_h rlineto
+  d_w neg 0 rlineto
+  closepath
+} def
+
+/bgs {	% x y height blskip gray str -> -	show string with bg color
+  /str exch def
+  /gray exch def
+  /blskip exch def
+  /height exch def
+  /y exch def
+  /x exch def
+
+  gsave
+    x y blskip sub str stringwidth pop height Box
+    gray setgray
+    fill
+  grestore
+  x y M str s
+} def
+
+/bgcs { % x y height blskip red green blue str -> -  show string with bg color
+  /str exch def
+  /blue exch def
+  /green exch def
+  /red exch def
+  /blskip exch def
+  /height exch def
+  /y exch def
+  /x exch def
+
+  gsave
+    x y blskip sub str stringwidth pop height Box
+    red green blue setrgbcolor
+    fill
+  grestore
+  x y M str s
+} def
+
+% Highlight bars.
+/highlight_bars {	% nlines lineheight output_y_margin gray -> -
+  gsave
+    setgray
+    /ymarg exch def
+    /lineheight exch def
+    /nlines exch def
+
+    % This 2 is just a magic number to sync highlight lines to text.
+    0 d_header_y ymarg sub 2 sub translate
+
+    /cw d_output_w cols div def
+    /nrows d_output_h ymarg 2 mul sub lineheight div cvi def
+
+    % for each column
+    0 1 cols 1 sub {
+      cw mul /xp exch def
+
+      % for each rows
+      0 1 nrows 1 sub {
+        /rn exch def
+        rn lineheight mul neg /yp exch def
+        rn nlines idiv 2 mod 0 eq {
+	  % Draw highlight bar.  4 is just a magic indentation.
+	  xp 4 add yp cw 8 sub lineheight neg Box fill
+	} if
+      } for
+    } for
+
+  grestore
+} def
+
+% Line highlight bar.
+/line_highlight {	% x y width height gray -> -
+  gsave
+    /gray exch def
+    Box gray setgray fill
+  grestore
+} def
+
+% Column separator lines.
+/column_lines {
+  gsave
+    .1 setlinewidth
+    0 d_footer_h translate
+    /cw d_output_w cols div def
+    1 1 cols 1 sub {
+      cw mul 0 moveto
+      0 d_output_h rlineto stroke
+    } for
+  grestore
+} def
+
+% Column borders.
+/column_borders {
+  gsave
+    .1 setlinewidth
+    0 d_footer_h moveto
+    0 d_output_h rlineto
+    d_output_w 0 rlineto
+    0 d_output_h neg rlineto
+    closepath stroke
+  grestore
+} def
+
+% Do the actual underlay drawing
+/draw_underlay {
+  ul_style 0 eq {
+    ul_str true charpath stroke
+  } {
+    ul_str show
+  } ifelse
+} def
+
+% Underlay
+/underlay {	% - -> -
+  gsave
+    0 d_page_h translate
+    d_page_h neg d_page_w atan rotate
+
+    ul_gray setgray
+    ul_font setfont
+    /dw d_page_h dup mul d_page_w dup mul add sqrt def
+    ul_str stringwidth pop dw exch sub 2 div ul_h_ptsize -2 div moveto
+    draw_underlay
+  grestore
+} def
+
+/user_underlay {	% - -> -
+  gsave
+    ul_x ul_y translate
+    ul_angle rotate
+    ul_gray setgray
+    ul_font setfont
+    0 0 ul_h_ptsize 2 div sub moveto
+    draw_underlay
+  grestore
+} def
+
+% Page prefeed
+/page_prefeed {		% bool -> -
+  statusdict /prefeed known {
+    statusdict exch /prefeed exch put
+  } {
+    pop
+  } ifelse
+} def
+
+% Wrapped line markers
+/wrapped_line_mark {	% x y charwith charheight type -> -
+  /type exch def
+  /h exch def
+  /w exch def
+  /y exch def
+  /x exch def
+
+  type 2 eq {
+    % Black boxes (like TeX does)
+    gsave
+      0 setlinewidth
+      x w 4 div add y M
+      0 h rlineto w 2 div 0 rlineto 0 h neg rlineto
+      closepath fill
+    grestore
+  } {
+    type 3 eq {
+      % Small arrows
+      gsave
+        .2 setlinewidth
+        x w 2 div add y h 2 div add M
+        w 4 div 0 rlineto
+        x w 4 div add y lineto stroke
+
+        x w 4 div add w 8 div add y h 4 div add M
+        x w 4 div add y lineto
+	w 4 div h 8 div rlineto stroke
+      grestore
+    } {
+      % do nothing
+    } ifelse
+  } ifelse
+} def
+
+% EPSF import.
+
+/BeginEPSF {
+  /b4_Inc_state save def    		% Save state for cleanup
+  /dict_count countdictstack def	% Count objects on dict stack
+  /op_count count 1 sub def		% Count objects on operand stack
+  userdict begin
+  /showpage { } def
+  0 setgray 0 setlinecap
+  1 setlinewidth 0 setlinejoin
+  10 setmiterlimit [ ] 0 setdash newpath
+  /languagelevel where {
+    pop languagelevel
+    1 ne {
+      false setstrokeadjust false setoverprint
+    } if
+  } if
+} bind def
+
+/EndEPSF {
+  count op_count sub { pos } repeat	% Clean up stacks
+  countdictstack dict_count sub { end } repeat
+  b4_Inc_state restore
+} bind def
+
+% Check PostScript language level.
+/languagelevel where {
+  pop /gs_languagelevel languagelevel def
+} {
+  /gs_languagelevel 1 def
+} ifelse
+%%EndResource
+%%BeginResource: procset Enscript-Encoding-88591 1.6 4
+/encoding_vector [
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/space        	/exclam       	/quotedbl     	/numbersign   	
+/dollar       	/percent      	/ampersand    	/quoteright   	
+/parenleft    	/parenright   	/asterisk     	/plus         	
+/comma        	/hyphen       	/period       	/slash        	
+/zero         	/one          	/two          	/three        	
+/four         	/five         	/six          	/seven        	
+/eight        	/nine         	/colon        	/semicolon    	
+/less         	/equal        	/greater      	/question     	
+/at           	/A            	/B            	/C            	
+/D            	/E            	/F            	/G            	
+/H            	/I            	/J            	/K            	
+/L            	/M            	/N            	/O            	
+/P            	/Q            	/R            	/S            	
+/T            	/U            	/V            	/W            	
+/X            	/Y            	/Z            	/bracketleft  	
+/backslash    	/bracketright 	/asciicircum  	/underscore   	
+/quoteleft    	/a            	/b            	/c            	
+/d            	/e            	/f            	/g            	
+/h            	/i            	/j            	/k            	
+/l            	/m            	/n            	/o            	
+/p            	/q            	/r            	/s            	
+/t            	/u            	/v            	/w            	
+/x            	/y            	/z            	/braceleft    	
+/bar          	/braceright   	/tilde        	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/space        	/exclamdown   	/cent         	/sterling     	
+/currency     	/yen          	/brokenbar    	/section      	
+/dieresis     	/copyright    	/ordfeminine  	/guillemotleft	
+/logicalnot   	/hyphen       	/registered   	/macron       	
+/degree       	/plusminus    	/twosuperior  	/threesuperior	
+/acute        	/mu           	/paragraph    	/bullet       	
+/cedilla      	/onesuperior  	/ordmasculine 	/guillemotright	
+/onequarter   	/onehalf      	/threequarters	/questiondown 	
+/Agrave       	/Aacute       	/Acircumflex  	/Atilde       	
+/Adieresis    	/Aring        	/AE           	/Ccedilla     	
+/Egrave       	/Eacute       	/Ecircumflex  	/Edieresis    	
+/Igrave       	/Iacute       	/Icircumflex  	/Idieresis    	
+/Eth          	/Ntilde       	/Ograve       	/Oacute       	
+/Ocircumflex  	/Otilde       	/Odieresis    	/multiply     	
+/Oslash       	/Ugrave       	/Uacute       	/Ucircumflex  	
+/Udieresis    	/Yacute       	/Thorn        	/germandbls   	
+/agrave       	/aacute       	/acircumflex  	/atilde       	
+/adieresis    	/aring        	/ae           	/ccedilla     	
+/egrave       	/eacute       	/ecircumflex  	/edieresis    	
+/igrave       	/iacute       	/icircumflex  	/idieresis    	
+/eth          	/ntilde       	/ograve       	/oacute       	
+/ocircumflex  	/otilde       	/odieresis    	/divide       	
+/oslash       	/ugrave       	/uacute       	/ucircumflex  	
+/udieresis    	/yacute       	/thorn        	/ydieresis    	
+] def
+%%EndResource
+%%EndProlog
+%%BeginSetup
+%%IncludeResource: font Courier-Bold
+%%IncludeResource: font Courier
+/HFpt_w 10 def
+/HFpt_h 10 def
+/Courier-Bold /HF-gs-font MF
+/HF /HF-gs-font findfont [HFpt_w 0 0 HFpt_h 0 0] makefont def
+/Courier /F-gs-font MF
+/F-gs-font 8 8 SF
+/#copies 1 def
+% Pagedevice definitions:
+gs_languagelevel 1 gt {
+  <<
+    /PageSize [612 792] 
+  >> setpagedevice
+} if
+%%BeginResource: procset Enscript-Header-simple 1.6 4
+
+/do_header {	% print default simple header
+  gsave
+    d_header_x d_header_y HFpt_h 3 div add translate
+
+    HF setfont
+    user_header_p {
+      5 0 moveto user_header_left_str show
+
+      d_header_w user_header_center_str stringwidth pop sub 2 div
+      0 moveto user_header_center_str show
+
+      d_header_w user_header_right_str stringwidth pop sub 5 sub
+      0 moveto user_header_right_str show
+    } {
+      fname length fmodstr length add pagenumstr length add d_header_w 6 idiv le{
+        5 0 moveto fname show
+        45 0 rmoveto fmodstr show
+        45 0 rmoveto pagenumstr show
+      } {
+        5 0 moveto fmodstr show
+        45 0 rmoveto pagenumstr show
+        fname length d_header_w 6 idiv idiv 1 add 10 mul 5 exch moveto
+        1 1 fname length d_header_w 6 idiv idiv
+        {
+          dup fname exch 1 sub d_header_w 6 idiv mul d_header_w 6 idiv getinterval show
+          5 exch 10 mul fname length d_header_w 6 idiv idiv 1 add 10 mul exch sub moveto
+        } for
+        5 10 moveto
+        fname fname length d_header_w 6 idiv idiv d_header_w 6 idiv mul dup fname length exch sub getinterval show
+      }ifelse
+    }ifelse
+
+  grestore
+} def
+%%EndResource
+/d_page_w 536 def
+/d_page_h 744 def
+/d_header_x 0 def
+/d_header_y 700 def
+/d_header_w 536 def
+/d_header_h 44 def
+/d_footer_x 0 def
+/d_footer_y 0 def
+/d_footer_w 536 def
+/d_footer_h 0 def
+/d_output_w 536 def
+/d_output_h 700 def
+/cols 1 def
+%%EndSetup
+%%Page: (1) 1
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 1 def
+/fname (CompletionBiased.java) def
+/fdir () def
+/ftail (CompletionBiased.java) def
+% User defined strings:
+/fmodstr (Thu Aug 09 23:58:13 2007) def
+/pagenumstr (1) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 689 M
+(package netsci;) s
+5 671 M
+(import edu.uci.ics.jung.graph.*;) s
+5 662 M
+(import edu.uci.ics.jung.graph.impl.*;) s
+5 653 M
+(import java.util.*;) s
+5 644 M
+(//import edu.uci.ics.jung.io.*;) s
+5 635 M
+(//import java.io.*;) s
+5 617 M
+(/**) s
+5 608 M
+( * Completes an RDS tree by using degree information from the) s
+5 599 M
+( * underlying graph from which the RDS tree was made) s
+5 590 M
+( * ) s
+5 581 M
+( * @version     $$) s
+5 572 M
+( * @author      Bilal Khan) s
+5 563 M
+( */) s
+5 554 M
+(public class CompletionBiased extends Completion {) s
+5 536 M
+(    private static int _phase = 1;) s
+5 518 M
+(    static class CompletionBiasedIterator extends Completion.CompletionIterator {) s
+5 509 M
+(        ) s
+5 500 M
+(        CompletionBiasedIterator \(RDS rds, Graph g\) {) s
+5 491 M
+(            super\(rds, g\);) s
+5 482 M
+(        }) s
+5 464 M
+(        public Object next\(\) {) s
+5 455 M
+(            return new CompletionBiased\(_rds, _g\);) s
+5 446 M
+(        }) s
+5 437 M
+(    }) s
+5 419 M
+(    public static Iterator iterator\(RDS rds, Graph g\) {) s
+5 410 M
+(        return new CompletionBiasedIterator\(rds, g\);) s
+5 401 M
+(    }) s
+5 383 M
+(    protected CompletionBiased\(RDS rds, Graph g\) {) s
+5 374 M
+(        super\(rds, g\);) s
+5 365 M
+(    }) s
+5 347 M
+(    protected void buildCompletion\(RDS rds, Graph g\) {) s
+5 338 M
+(        // print the status before completion) s
+5 329 M
+(        if \(DEBUG\) System.out.println\(""+this.toString\(\)\);) s
+5 311 M
+(        // phase 1) s
+5 302 M
+(        _phase=1;) s
+5 284 M
+(        buildAllOptions\(\);) s
+5 275 M
+(        boolean done = false;) s
+5 266 M
+(        while \(!done\) {) s
+5 257 M
+(            done = chooseOneOption\(\) || \(_options.size\(\) == 0\);) s
+5 248 M
+(            buildAllOptions\(\);) s
+5 239 M
+(        }) s
+5 221 M
+(        // phase 2) s
+5 212 M
+(        _phase=2;) s
+5 194 M
+(        buildAllOptions\(\);) s
+5 185 M
+(        done = false;) s
+5 176 M
+(        while \(!done\) {) s
+5 167 M
+(            done = chooseOneOption\(\) || \(_options.size\(\) == 0\);) s
+5 158 M
+(            buildAllOptions\(\);) s
+5 149 M
+(        }) s
+5 140 M
+(    }) s
+5 122 M
+(    protected void buildAllOptions\(\) {) s
+5 113 M
+(        _options.clear\(\);) s
+5 104 M
+(        for \(Iterator v1it = _tasks.iterator\(\); v1it.hasNext\(\);\) {) s
+5 95 M
+(            Vertex cv1 = \(Vertex\)v1it.next\(\);) s
+5 86 M
+(            for \(Iterator v2it = _tasks.iterator\(\); v2it.hasNext\(\);\) {) s
+5 77 M
+(                Vertex cv2 = \(Vertex\)v2it.next\(\);) s
+5 68 M
+(                // check for duplicate edges and self loops) s
+5 59 M
+(                if \(cv1.isPredecessorOf\(cv2\) || cv2.isPredecessorOf\(cv1\) || \(cv1==cv2\)\) {) s
+5 50 M
+(                    continue;) s
+5 41 M
+(                }) s
+5 32 M
+(                // check that adding the edge doesn't imply that v1 or) s
+5 23 M
+(                // v2 did not follow directions at RDS tree build time) s
+5 14 M
+(                else if \(\(_phase==1\) && \(degreeViolation\(cv1,cv2\)\)\) {) s
+5 5 M
+(                    continue;) s
+_R
+S
+%%Page: (2) 2
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 2 def
+/fname (CompletionBiased.java) def
+/fdir () def
+/ftail (CompletionBiased.java) def
+% User defined strings:
+/fmodstr (Thu Aug 09 23:58:13 2007) def
+/pagenumstr (2) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 689 M
+(                }) s
+5 680 M
+(                // everything is fine... in phase 2 degree violations are ok) s
+5 671 M
+(                else {) s
+5 662 M
+(                    // add the option) s
+5 653 M
+(                    UndirectedSparseEdge e2 = new UndirectedSparseEdge\(cv1,cv2\);) s
+5 644 M
+(                    _options.addLast\(e2\);) s
+5 635 M
+(                }) s
+5 626 M
+(            }) s
+5 617 M
+(        }) s
+5 608 M
+(        if \(DEBUG\) System.out.println\("Options="+_options.size\(\)\);) s
+5 599 M
+(    }) s
+5 581 M
+(    private boolean degreeViolation\(Vertex cv1, Vertex cv2\) {) s
+5 572 M
+(        Vertex rv1 = getRDSVertex\(cv1\);) s
+5 563 M
+(        Vertex gv1 = _rds.getGraphVertex\(rv1\);) s
+5 554 M
+(        int d1target = gv1.inDegree\(\);) s
+5 545 M
+(        int time1 = \(\(Integer\)_rds._gv2time.get\(gv1\)\).intValue\(\);) s
+5 527 M
+(        Vertex rv2 = getRDSVertex\(cv2\);) s
+5 518 M
+(        Vertex gv2 = _rds.getGraphVertex\(rv2\);) s
+5 509 M
+(        int d2target = gv2.inDegree\(\);) s
+5 500 M
+(        int time2 = \(\(Integer\)_rds._gv2time.get\(gv2\)\).intValue\(\);) s
+5 482 M
+(        if \(_rds._gv2maxdeg.get\(gv1\)==null\) {) s
+5 473 M
+(            System.out.println\("maxdeg gv1 "+gv1+" is null"\);) s
+5 464 M
+(        }) s
+5 455 M
+(        if \(_rds._gv2maxdeg.get\(gv2\)==null\) {) s
+5 446 M
+(            System.out.println\("maxdeg gv2 "+gv2+" is null"\);) s
+5 437 M
+(        }) s
+5 419 M
+(        int maxdeg1 = \(\(Integer\)_rds._gv2maxdeg.get\(gv1\)\).intValue\(\);) s
+5 410 M
+(        int maxdeg2 = \(\(Integer\)_rds._gv2maxdeg.get\(gv2\)\).intValue\(\);) s
+5 392 M
+(        // v1 was undiscovered when v2 was discovered and v1's G) s
+5 383 M
+(        // degree > the smallest G-degree of the RDS referrals that v2) s
+5 374 M
+(        // made.  Ergo, v2 lied and did not give its coupons to the) s
+5 365 M
+(        // nodes with highest degree.  This makes the proposed edge) s
+5 356 M
+(        // illegal since we are presuming all nodes cooperated with) s
+5 347 M
+(        // the instructions.) s
+5 338 M
+(        if \(\(d1target > maxdeg2\) && \(time1 > time2\)\) {) s
+5 329 M
+(            //System.out.print\("Violation: "\);) s
+5 320 M
+(            //if \(d1target > maxdeg2\) System.out.print\("d1target\("+d1target+"\) > maxdeg2\("+maxdeg2+"\)"\);) s
+5 311 M
+(            //if \(time1 > time2\) System.out.print\("time1\("+time1+"\) > time2\("+time2+"\)"\);) s
+5 302 M
+(            //System.out.println\(""\);) s
+5 293 M
+(            return true;) s
+5 284 M
+(        }) s
+5 266 M
+(        // v2 was undiscovered when v1 was discovered and v2's G) s
+5 257 M
+(        // degree > the smallest G-degree of the RDS referrals that v1) s
+5 248 M
+(        // made.  Ergo, v1 lied and did not give its coupons to the) s
+5 239 M
+(        // nodes with highest degree.  This makes the proposed edge) s
+5 230 M
+(        // illegal since we are presuming all nodes cooperated with) s
+5 221 M
+(        // the instructions.) s
+5 212 M
+(        if \(\(d2target > maxdeg1\) && \(time2 > time1\)\) {) s
+5 203 M
+(            //System.out.print\("Violation: "\);) s
+5 194 M
+(            //if \(d2target > maxdeg1\) System.out.print\("d2target\("+d2target+"\) > maxdeg1\("+maxdeg1+"\)"\);) s
+5 185 M
+(            //if \(time2 > time1\) System.out.print\("time2\("+time2+"\) > time1\("+time1+"\)"\);) s
+5 176 M
+(            //System.out.println\(""\);) s
+5 167 M
+(            return true;) s
+5 158 M
+(        }) s
+5 140 M
+(        // everything is fine) s
+5 131 M
+(        return false;) s
+5 122 M
+(    }) s
+5 104 M
+(    public String toString\(\) {) s
+5 95 M
+(        int v = _completion.numVertices\(\);) s
+5 86 M
+(        int e = _completion.numEdges\(\);) s
+5 77 M
+(        String s = "CompletionBiased vertices="+v+",  edges="+e+", deficiency="+_tasks.size\(\)+"";) s
+5 68 M
+(        /*) s
+5 59 M
+(        s+="deficient nodes = [";) s
+5 50 M
+(        for \(Iterator it2=_tasks.iterator\(\);it2.hasNext\(\);\) {) s
+5 41 M
+(            Vertex fv=\(Vertex\)it2.next\(\);) s
+5 32 M
+(            s+=\(""+fv+","\);) s
+5 23 M
+(        }) s
+5 14 M
+(        s+=\("]"\);) s
+5 5 M
+(        */) s
+_R
+S
+%%Page: (3) 3
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 3 def
+/fname (CompletionBiased.java) def
+/fdir () def
+/ftail (CompletionBiased.java) def
+% User defined strings:
+/fmodstr (Thu Aug 09 23:58:13 2007) def
+/pagenumstr (3) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 689 M
+(        return s;) s
+5 680 M
+(    }) s
+5 671 M
+(};) s
+_R
+S
+%%Page: (1) 4
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 1 def
+/fname (Completion.java) def
+/fdir () def
+/ftail (Completion.java) def
+% User defined strings:
+/fmodstr (Thu Aug 09 08:51:51 2007) def
+/pagenumstr (1) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 689 M
+(package netsci;) s
+5 671 M
+(import edu.uci.ics.jung.graph.*;) s
+5 662 M
+(import edu.uci.ics.jung.graph.impl.*;) s
+5 653 M
+(import java.util.*;) s
+5 644 M
+(//import edu.uci.ics.jung.io.*;) s
+5 635 M
+(//import java.io.*;) s
+5 617 M
+(/**) s
+5 608 M
+( * Completes an RDS tree by using degree information from the) s
+5 599 M
+( * underlying graph from which the RDS tree was made) s
+5 590 M
+( * ) s
+5 581 M
+( * @version     $$) s
+5 572 M
+( * @author      Bilal Khan) s
+5 563 M
+( */) s
+5 554 M
+(public class Completion {) s
+5 536 M
+(    // debugging) s
+5 527 M
+(    protected static final boolean DEBUG = false;) s
+5 509 M
+(    // probability of connecting outside of the discovered graph) s
+5 500 M
+(    protected static final double CLOSURE_PROB = 1.0;) s
+5 491 M
+(    // maximum number of attempts to find an addable edge) s
+5 482 M
+(    protected static final int MAXTRIES = 10;) s
+5 464 M
+(    // the graph) s
+5 455 M
+(    final Graph _g;) s
+5 437 M
+(    // the rds) s
+5 428 M
+(    final RDS _rds;) s
+5 410 M
+(    // the completion of RDS;) s
+5 401 M
+(    final Graph _completion;) s
+5 383 M
+(    // deficiencies in vertex degree) s
+5 374 M
+(    protected final LinkedList _tasks = new LinkedList\(\);) s
+5 356 M
+(    // final options for edges) s
+5 347 M
+(    protected final LinkedList _options = new LinkedList\(\);) s
+5 329 M
+(    // tables to convert from RDS vertices to completion vertices and back) s
+5 320 M
+(    protected final Map _lutr2c = new HashMap\(\);) s
+5 311 M
+(    protected final Map _lutc2r = new HashMap\(\);) s
+5 293 M
+(    // iterator over completions) s
+5 284 M
+(    static class CompletionIterator implements Iterator {) s
+5 275 M
+(        protected RDS _rds;) s
+5 266 M
+(        protected Graph _g;) s
+5 257 M
+(        ) s
+5 248 M
+(        CompletionIterator \(RDS rds, Graph g\) {) s
+5 239 M
+(            _rds = rds;) s
+5 230 M
+(            _g = g;) s
+5 221 M
+(        }) s
+5 203 M
+(        public boolean hasNext\(\) {) s
+5 194 M
+(            return true;) s
+5 185 M
+(        }) s
+5 167 M
+(        public Object next\(\) {) s
+5 158 M
+(            return new Completion\(_rds, _g\);) s
+5 149 M
+(        }) s
+5 131 M
+(        public void remove\(\) {) s
+5 122 M
+(            // no-op) s
+5 113 M
+(        }) s
+5 104 M
+(    }) s
+5 86 M
+(    // static factory over RDS completions) s
+5 77 M
+(    public static Iterator iterator\(RDS rds, Graph g\) {) s
+5 68 M
+(        return new CompletionIterator\(rds, g\);) s
+5 59 M
+(    }) s
+5 41 M
+(    protected Completion\(RDS rds, Graph g\) {) s
+5 23 M
+(        // save args) s
+5 14 M
+(        _rds = rds;) s
+5 5 M
+(        _g = g;) s
+_R
+S
+%%Page: (2) 5
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 2 def
+/fname (Completion.java) def
+/fdir () def
+/ftail (Completion.java) def
+% User defined strings:
+/fmodstr (Thu Aug 09 08:51:51 2007) def
+/pagenumstr (2) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 680 M
+(        // the completion graph is a new graph) s
+5 671 M
+(        _completion = new UndirectedSparseGraph\(\);) s
+5 653 M
+(        // Add the vertices of the RDS to the completion graph) s
+5 644 M
+(        Set vset = rds._rds.getVertices\(\);) s
+5 635 M
+(        for \(Iterator it=vset.iterator\(\);it.hasNext\(\);\) {) s
+5 626 M
+(            Vertex rv = \(Vertex\)it.next\(\);) s
+5 617 M
+(            Vertex gv = rds.getGraphVertex\(rv\);) s
+5 608 M
+(            Vertex cv = new SimpleUndirectedSparseVertex\(\);) s
+5 599 M
+(            _completion.addVertex\(cv\);) s
+5 581 M
+(            // save a bidirectional mapping from RDS to completion vertices) s
+5 572 M
+(            _lutr2c.put\(rv, cv\);) s
+5 563 M
+(            _lutc2r.put\(cv, rv\);) s
+5 545 M
+(            // put the edge deficiencies in the task list) s
+5 536 M
+(            int rdeg = rv.inDegree\(\);) s
+5 527 M
+(            int gdeg = gv.inDegree\(\);) s
+5 518 M
+(            // if \(rds._seeds.contains\(rv\)\) System.out.print\("* "\);) s
+5 509 M
+(            // System.out.println\("rdeg="+rdeg+", gdeg="+gdeg\);) s
+5 500 M
+(            if \(rdeg < gdeg\) {) s
+5 491 M
+(                for \(int n=0; n<\(gdeg-rdeg\); n++\) {) s
+5 482 M
+(                    _tasks.addLast\(cv\);) s
+5 473 M
+(                }) s
+5 464 M
+(            }) s
+5 455 M
+(        }) s
+5 437 M
+(        // Add the edges of the RDS to the completion graph) s
+5 428 M
+(        Set eset = rds._rds.getEdges\(\);) s
+5 419 M
+(        for \(Iterator it=eset.iterator\(\);it.hasNext\(\);\) {) s
+5 410 M
+(            Edge e = \(Edge\)it.next\(\);) s
+5 401 M
+(            Vertex ru = \(Vertex\)e.getEndpoints\(\).getFirst\(\);) s
+5 392 M
+(            Vertex cu = getCompletionVertex\(ru\);) s
+5 383 M
+(            Vertex rv = \(Vertex\)e.getEndpoints\(\).getSecond\(\);) s
+5 374 M
+(            Vertex cv = getCompletionVertex\(rv\);) s
+5 365 M
+(            UndirectedSparseEdge e2 = new UndirectedSparseEdge\(cu,cv\);) s
+5 356 M
+(            _completion.addEdge\(e2\);) s
+5 347 M
+(        }) s
+5 329 M
+(        // complete the graph) s
+5 320 M
+(        buildCompletion\(rds, g\);) s
+5 311 M
+(    }) s
+5 293 M
+(    protected void buildCompletion\(RDS rds, Graph g\) {) s
+5 284 M
+(        // print the status before completion) s
+5 275 M
+(        if \(DEBUG\) System.out.println\(""+this.toString\(\)\);) s
+5 257 M
+(        int tries = 0;) s
+5 248 M
+(        while \(\(_tasks.size\(\) > 1\) && \(tries <= MAXTRIES\)\) {) s
+5 239 M
+(            boolean found = false;) s
+5 230 M
+(            Vertex v1,v2;) s
+5 221 M
+(            ) s
+5 212 M
+(            tries = 0;) s
+5 203 M
+(            do {) s
+5 194 M
+(                int n = _tasks.size\(\);) s
+5 185 M
+(                int r1 = \(int\)\(Math.random\(\) * n\);) s
+5 176 M
+(                v1 = \(Vertex\)_tasks.remove\(r1\);) s
+5 167 M
+(                n = _tasks.size\(\);) s
+5 158 M
+(                int r2 = \(int\)\(Math.random\(\) * n\);) s
+5 149 M
+(                v2 = \(Vertex\)_tasks.remove\(r2\);) s
+5 131 M
+(                if \(DEBUG\) System.out.println\("contemplating edge \("+v1+", "+v2+"\)"\);) s
+5 113 M
+(                // no duplicate edges or self loops) s
+5 104 M
+(                if \(v1.isPredecessorOf\(v2\) || v2.isPredecessorOf\(v1\) || \(v1==v2\)\) {) s
+5 95 M
+(                    _tasks.addLast\(v1\);) s
+5 86 M
+(                    _tasks.addLast\(v2\);) s
+5 77 M
+(                }) s
+5 68 M
+(                else {) s
+5 59 M
+(                    found = true;) s
+5 50 M
+(                }) s
+5 32 M
+(                tries++;) s
+5 23 M
+(                if \(tries > MAXTRIES\) {) s
+5 14 M
+(                    // we give up) s
+5 5 M
+(                    found = true;) s
+_R
+S
+%%Page: (3) 6
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 3 def
+/fname (Completion.java) def
+/fdir () def
+/ftail (Completion.java) def
+% User defined strings:
+/fmodstr (Thu Aug 09 08:51:51 2007) def
+/pagenumstr (3) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 689 M
+(                }) s
+5 680 M
+(            }) s
+5 671 M
+(            while \(!found\);) s
+5 653 M
+(            if \(tries > MAXTRIES\) {) s
+5 644 M
+(                // we gave up) s
+5 635 M
+(                if \(DEBUG\) System.out.println\("Unable to add any more edges after "+MAXTRIES+" attempts"\);) s
+5 626 M
+(            }) s
+5 617 M
+(            else {) s
+5 608 M
+(                if \(DEBUG\) System.out.println\("adding \("+v1+", "+v2+"\)"\);) s
+5 599 M
+(                UndirectedSparseEdge e = new UndirectedSparseEdge\(v1,v2\);) s
+5 590 M
+(                _completion.addEdge\(e\);) s
+5 581 M
+(            }) s
+5 572 M
+(        }) s
+5 554 M
+(        // in the second pass we do exhaustive search) s
+5 536 M
+(        buildAllOptions\(\);) s
+5 527 M
+(        boolean done = false;) s
+5 518 M
+(        while \(!done\) {) s
+5 509 M
+(            done = chooseOneOption\(\) || \(_options.size\(\) == 0\);) s
+5 500 M
+(            buildAllOptions\(\);) s
+5 491 M
+(        }) s
+5 482 M
+(    }) s
+5 464 M
+(    protected void buildAllOptions\(\) {) s
+5 455 M
+(        _options.clear\(\);) s
+5 446 M
+(        for \(Iterator v1it = _tasks.iterator\(\); v1it.hasNext\(\);\) {) s
+5 437 M
+(            Vertex cv1 = \(Vertex\)v1it.next\(\);) s
+5 428 M
+(            for \(Iterator v2it = _tasks.iterator\(\); v2it.hasNext\(\);\) {) s
+5 419 M
+(                Vertex cv2 = \(Vertex\)v2it.next\(\);) s
+5 410 M
+(                // duplicate edges and self loops are not an option) s
+5 401 M
+(                if \(cv1.isPredecessorOf\(cv2\) || cv2.isPredecessorOf\(cv1\) || \(cv1==cv2\)\) {) s
+5 392 M
+(                    continue;) s
+5 383 M
+(                }) s
+5 374 M
+(                else {) s
+5 365 M
+(                    // add the option) s
+5 356 M
+(                    UndirectedSparseEdge e2 = new UndirectedSparseEdge\(cv1,cv2\);) s
+5 347 M
+(                    _options.addLast\(e2\);) s
+5 338 M
+(                }) s
+5 329 M
+(            }) s
+5 320 M
+(        }) s
+5 311 M
+(        if \(DEBUG\) System.out.println\("Options="+_options.size\(\)\);) s
+5 302 M
+(    }) s
+5 284 M
+(    protected boolean chooseOneOption\(\) {) s
+5 275 M
+(        if \(_options.size\(\) > 0\) {) s
+5 266 M
+(            int n = _options.size\(\);) s
+5 257 M
+(            int r = \(int\)\(Math.random\(\) * n\);) s
+5 248 M
+(            UndirectedSparseEdge e = \(UndirectedSparseEdge\)_options.get\(r\);) s
+5 239 M
+(            _completion.addEdge\(e\);) s
+5 230 M
+(            _tasks.remove\(e.getEndpoints\(\).getFirst\(\)\);) s
+5 221 M
+(            _tasks.remove\(e.getEndpoints\(\).getSecond\(\)\);) s
+5 212 M
+(            return false;) s
+5 203 M
+(        }) s
+5 194 M
+(        else return true;) s
+5 185 M
+(    }) s
+5 167 M
+(    Vertex getCompletionVertex\(Vertex rv\) {) s
+5 158 M
+(        return \(Vertex\)_lutr2c.get\(rv\);) s
+5 149 M
+(    }) s
+5 131 M
+(    protected Vertex getRDSVertex\(Vertex cv\) {) s
+5 122 M
+(        return \(Vertex\)_lutc2r.get\(cv\);) s
+5 113 M
+(    }) s
+5 95 M
+(    static Vertex getRandomRDSVertex\(RDS rds\) {) s
+5 86 M
+(        Set vset = rds._rds.getVertices\(\);) s
+5 77 M
+(        Object[] varray = vset.toArray\(\);) s
+5 68 M
+(        int r = \(int\)\(Math.random\(\) * varray.length\);) s
+5 59 M
+(        Vertex v = \(Vertex\)varray[r];) s
+5 50 M
+(        return v;) s
+5 41 M
+(    }) s
+5 23 M
+(    public String toString\(\) {) s
+5 14 M
+(        int v = _completion.numVertices\(\);) s
+5 5 M
+(        int e = _completion.numEdges\(\);) s
+_R
+S
+%%Page: (4) 7
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 4 def
+/fname (Completion.java) def
+/fdir () def
+/ftail (Completion.java) def
+% User defined strings:
+/fmodstr (Thu Aug 09 08:51:51 2007) def
+/pagenumstr (4) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 689 M
+(        String s = "Completion vertices="+v+",  edges="+e+", deficiency="+_tasks.size\(\)+"";) s
+5 680 M
+(        /*) s
+5 671 M
+(        s+="deficient nodes = [";) s
+5 662 M
+(        for \(Iterator it2=_tasks.iterator\(\);it2.hasNext\(\);\) {) s
+5 653 M
+(            Vertex fv=\(Vertex\)it2.next\(\);) s
+5 644 M
+(            s+=\(""+fv+","\);) s
+5 635 M
+(        }) s
+5 626 M
+(        s+=\("]"\);) s
+5 617 M
+(        */) s
+5 608 M
+(        return s;) s
+5 599 M
+(    }) s
+5 590 M
+(};) s
+_R
+S
+%%Page: (1) 8
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 1 def
+/fname (MeasurableAggregateConstraint.java) def
+/fdir () def
+/ftail (MeasurableAggregateConstraint.java) def
+% User defined strings:
+/fmodstr (Thu Aug 09 12:28:36 2007) def
+/pagenumstr (1) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 689 M
+(package netsci;) s
+5 671 M
+(import edu.uci.ics.jung.graph.*;) s
+5 662 M
+(import edu.uci.ics.jung.graph.impl.*;) s
+5 653 M
+(import edu.uci.ics.jung.algorithms.importance.*;) s
+5 644 M
+(import edu.uci.ics.jung.algorithms.cluster.*;) s
+5 635 M
+(import edu.uci.ics.jung.graph.decorators.*;) s
+5 626 M
+(import edu.uci.ics.jung.algorithms.metrics.*;) s
+5 617 M
+(import java.util.*;) s
+5 608 M
+(//import edu.uci.ics.jung.io.*;) s
+5 599 M
+(//import java.io.*;) s
+5 581 M
+(/**) s
+5 572 M
+( * A class representing measuring aggregate constraint) s
+5 563 M
+( * ) s
+5 554 M
+( * @version     $$) s
+5 545 M
+( * @author      Bilal Khan) s
+5 536 M
+( */) s
+5 527 M
+(public class MeasurableAggregateConstraint implements Measurable {) s
+5 509 M
+(    private final StructuralHoles _sh;) s
+5 500 M
+(    private final EdgeWeightLabeller _ewl;) s
+5 482 M
+(    MeasurableAggregateConstraint\(Graph g\) {) s
+5 473 M
+(        _ewl = EdgeWeightLabeller.getLabeller\(g\);) s
+5 464 M
+(        for \(Iterator eit=g.getEdges\(\).iterator\(\); eit.hasNext\(\); \) {) s
+5 455 M
+(            Edge e = \(Edge\)eit.next\(\);) s
+5 446 M
+(            _ewl.setWeight\(e,1\);) s
+5 437 M
+(        }) s
+5 428 M
+(        _sh = new StructuralHoles\(_ewl\);) s
+5 419 M
+(    }) s
+5 410 M
+(        ) s
+5 401 M
+(    public double readValue\(Vertex vquery\) {) s
+5 392 M
+(        double value = _sh.hierarchy\(vquery\);) s
+5 383 M
+(        return value;) s
+5 374 M
+(    }) s
+5 365 M
+(};) s
+_R
+S
+%%Page: (1) 9
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 1 def
+/fname (MeasurableAuthority.java) def
+/fdir () def
+/ftail (MeasurableAuthority.java) def
+% User defined strings:
+/fmodstr (Thu Aug 09 16:12:54 2007) def
+/pagenumstr (1) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 689 M
+(package netsci;) s
+5 671 M
+(import edu.uci.ics.jung.graph.*;) s
+5 662 M
+(import edu.uci.ics.jung.graph.impl.*;) s
+5 653 M
+(import edu.uci.ics.jung.algorithms.importance.*;) s
+5 644 M
+(import edu.uci.ics.jung.algorithms.cluster.*;) s
+5 635 M
+(import java.util.*;) s
+5 626 M
+(//import edu.uci.ics.jung.io.*;) s
+5 617 M
+(//import java.io.*;) s
+5 599 M
+(/**) s
+5 590 M
+( * A class representing measuring authority) s
+5 581 M
+( * ) s
+5 572 M
+( * @version     $$) s
+5 563 M
+( * @author      Bilal Khan) s
+5 554 M
+( */) s
+5 545 M
+(public class MeasurableAuthority implements Measurable {) s
+5 527 M
+(    private final HITS _ranker;) s
+5 518 M
+(    private final List _rlist;) s
+5 500 M
+(    MeasurableAuthority\(Graph g\) {) s
+5 491 M
+(        HITS ranker = new HITS\(g, true\); // use authority for ranking) s
+5 482 M
+(        _ranker = new HITS\(g\);) s
+5 473 M
+(        _ranker.setRemoveRankScoresOnFinalize\(false\);) s
+5 464 M
+(        _ranker.evaluate\(\);) s
+5 455 M
+(        _rlist = _ranker.getRankings\(\);) s
+5 446 M
+(    }) s
+5 437 M
+(        ) s
+5 428 M
+(    public double readValue\(Vertex vquery\) {) s
+5 419 M
+(        double value = -1.0;) s
+5 410 M
+(        for \(Iterator rlit=_rlist.iterator\(\); rlit.hasNext\(\); \) {) s
+5 401 M
+(            NodeRanking nr = \(NodeRanking\)rlit.next\(\);) s
+5 392 M
+(            Vertex rv = nr.vertex;) s
+5 383 M
+(            if \(rv==vquery\) {) s
+5 374 M
+(                value = nr.rankScore;) s
+5 365 M
+(                break;) s
+5 356 M
+(            }) s
+5 347 M
+(        }) s
+5 338 M
+(        return value;) s
+5 329 M
+(    }) s
+5 320 M
+(};) s
+_R
+S
+%%Page: (1) 10
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 1 def
+/fname (MeasurableBC.java) def
+/fdir () def
+/ftail (MeasurableBC.java) def
+% User defined strings:
+/fmodstr (Sat Aug 04 19:05:20 2007) def
+/pagenumstr (1) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 689 M
+(package netsci;) s
+5 671 M
+(import edu.uci.ics.jung.graph.*;) s
+5 662 M
+(import edu.uci.ics.jung.graph.impl.*;) s
+5 653 M
+(import edu.uci.ics.jung.algorithms.importance.*;) s
+5 644 M
+(import edu.uci.ics.jung.algorithms.cluster.*;) s
+5 635 M
+(import java.util.*;) s
+5 626 M
+(//import edu.uci.ics.jung.io.*;) s
+5 617 M
+(//import java.io.*;) s
+5 599 M
+(/**) s
+5 590 M
+( * A class representing measuring betweenness centrality) s
+5 581 M
+( * ) s
+5 572 M
+( * @version     $$) s
+5 563 M
+( * @author      Bilal Khan) s
+5 554 M
+( */) s
+5 545 M
+(public class MeasurableBC implements Measurable {) s
+5 527 M
+(    private final BetweennessCentrality _ranker;) s
+5 518 M
+(    private final List _rlist;) s
+5 500 M
+(    private final WeakComponentClusterer _clusterer = new WeakComponentClusterer\(\);) s
+5 491 M
+(    private final ClusterSet _clusters;) s
+5 473 M
+(    MeasurableBC\(Graph g\) {) s
+5 455 M
+(        _ranker = new BetweennessCentrality\(g, true, false\);) s
+5 446 M
+(        _ranker.setRemoveRankScoresOnFinalize\(false\);) s
+5 437 M
+(        _ranker.evaluate\(\);) s
+5 428 M
+(        _rlist = _ranker.getRankings\(\);) s
+5 410 M
+(        _clusters = _clusterer.extract\(g\);) s
+5 401 M
+(        // System.out.println\("Number of components "+_clusters.size\(\)\);) s
+5 392 M
+(    }) s
+5 383 M
+(        ) s
+5 374 M
+(    public double readValue\(Vertex vquery\) {) s
+5 365 M
+(        double value = -1.0;) s
+5 356 M
+(        int i=0;) s
+5 347 M
+(        boolean done = false;) s
+5 338 M
+(        for \(Iterator it=_clusters.iterator\(\); it.hasNext\(\) && !done; \) {) s
+5 329 M
+(            // System.out.println\("Component "+i\);) s
+5 320 M
+(            HashSet onecomp = \(HashSet\)it.next\(\);) s
+5 311 M
+(            if \(!onecomp.contains\(vquery\)\) continue;) s
+5 302 M
+(            // else we found the component which has the vertex of interest) s
+5 284 M
+(            for \(Iterator it2=onecomp.iterator\(\); it2.hasNext\(\) && !done; \) {) s
+5 275 M
+(                Vertex vx = \(Vertex\)it2.next\(\);) s
+5 266 M
+(                if \(vx!=vquery\) continue;) s
+5 257 M
+(                // else we found the vertex of interest) s
+5 239 M
+(                // calculate the relative betweenness rank of vquery) s
+5 230 M
+(                int rankcalc = 0;) s
+5 221 M
+(                double score = -1.0;) s
+5 212 M
+(                for \(Iterator rlit=_rlist.iterator\(\); rlit.hasNext\(\); \) {) s
+5 203 M
+(                    NodeRanking nr = \(NodeRanking\)rlit.next\(\);) s
+5 194 M
+(                    Vertex rv = nr.vertex;) s
+5 185 M
+(                    score = nr.rankScore;) s
+5 176 M
+(                    if \(onecomp.contains\(rv\)\) {) s
+5 167 M
+(                        rankcalc++;) s
+5 158 M
+(                    }) s
+5 149 M
+(                    if \(rv==vx\) break;) s
+5 140 M
+(                }) s
+5 122 M
+(                value = \(double\)rankcalc/\(double\)onecomp.size\(\);) s
+5 113 M
+(                done = true;) s
+5 104 M
+(                // System.out.println\("Vertex:"+vx+" relrank:"+rankcalc+"/"+onecomp.size\(\)+" absrank="+score\)) s
+5 95 M
+(;) s
+5 86 M
+(            }) s
+5 77 M
+(            i++;) s
+5 68 M
+(        }) s
+5 59 M
+(        return value;) s
+5 50 M
+(    }) s
+5 41 M
+(};) s
+_R
+S
+%%Page: (1) 11
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 1 def
+/fname (MeasurableBCRaw.java) def
+/fdir () def
+/ftail (MeasurableBCRaw.java) def
+% User defined strings:
+/fmodstr (Sun Aug 05 00:26:58 2007) def
+/pagenumstr (1) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 689 M
+(package netsci;) s
+5 671 M
+(import edu.uci.ics.jung.graph.*;) s
+5 662 M
+(import edu.uci.ics.jung.graph.impl.*;) s
+5 653 M
+(import edu.uci.ics.jung.algorithms.importance.*;) s
+5 644 M
+(import edu.uci.ics.jung.algorithms.cluster.*;) s
+5 635 M
+(import java.util.*;) s
+5 626 M
+(//import edu.uci.ics.jung.io.*;) s
+5 617 M
+(//import java.io.*;) s
+5 599 M
+(/**) s
+5 590 M
+( * A class representing measuring betweenness centrality) s
+5 581 M
+( * ) s
+5 572 M
+( * @version     $$) s
+5 563 M
+( * @author      Bilal Khan) s
+5 554 M
+( */) s
+5 545 M
+(public class MeasurableBCRaw implements Measurable {) s
+5 527 M
+(    private final BetweennessCentrality _ranker;) s
+5 518 M
+(    private final List _rlist;) s
+5 509 M
+(    MeasurableBCRaw\(Graph g\) {) s
+5 491 M
+(        _ranker = new BetweennessCentrality\(g, true, false\);) s
+5 482 M
+(        _ranker.setRemoveRankScoresOnFinalize\(false\);) s
+5 473 M
+(        _ranker.evaluate\(\);) s
+5 464 M
+(        _rlist = _ranker.getRankings\(\);) s
+5 455 M
+(    }) s
+5 446 M
+(        ) s
+5 437 M
+(    public double readValue\(Vertex vquery\) {) s
+5 428 M
+(        double value = -1.0;) s
+5 419 M
+(        for \(Iterator rlit=_rlist.iterator\(\); rlit.hasNext\(\); \) {) s
+5 410 M
+(            NodeRanking nr = \(NodeRanking\)rlit.next\(\);) s
+5 401 M
+(            Vertex rv = nr.vertex;) s
+5 392 M
+(            if \(rv==vquery\) {) s
+5 383 M
+(                value = nr.rankScore;) s
+5 374 M
+(                break;) s
+5 365 M
+(            }) s
+5 356 M
+(        }) s
+5 347 M
+(        return value;) s
+5 338 M
+(    }) s
+5 329 M
+(};) s
+_R
+S
+%%Page: (1) 12
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 1 def
+/fname (MeasurableConstraint.java) def
+/fdir () def
+/ftail (MeasurableConstraint.java) def
+% User defined strings:
+/fmodstr (Sun Aug 05 19:57:09 2007) def
+/pagenumstr (1) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 689 M
+(package netsci;) s
+5 671 M
+(import edu.uci.ics.jung.graph.*;) s
+5 662 M
+(import edu.uci.ics.jung.graph.impl.*;) s
+5 653 M
+(import edu.uci.ics.jung.algorithms.importance.*;) s
+5 644 M
+(import edu.uci.ics.jung.algorithms.cluster.*;) s
+5 635 M
+(import edu.uci.ics.jung.graph.decorators.*;) s
+5 626 M
+(import edu.uci.ics.jung.algorithms.metrics.*;) s
+5 617 M
+(import java.util.*;) s
+5 608 M
+(//import edu.uci.ics.jung.io.*;) s
+5 599 M
+(//import java.io.*;) s
+5 581 M
+(/**) s
+5 572 M
+( * A class representing measuring pagerank) s
+5 563 M
+( * ) s
+5 554 M
+( * @version     $$) s
+5 545 M
+( * @author      Bilal Khan) s
+5 536 M
+( */) s
+5 527 M
+(public class MeasurableConstraint implements Measurable {) s
+5 509 M
+(    private final StructuralHoles _sh;) s
+5 500 M
+(    private final EdgeWeightLabeller _ewl;) s
+5 482 M
+(    MeasurableConstraint\(Graph g\) {) s
+5 473 M
+(        _ewl = EdgeWeightLabeller.getLabeller\(g\);) s
+5 464 M
+(        for \(Iterator eit=g.getEdges\(\).iterator\(\); eit.hasNext\(\); \) {) s
+5 455 M
+(            Edge e = \(Edge\)eit.next\(\);) s
+5 446 M
+(            _ewl.setWeight\(e,1\);) s
+5 437 M
+(        }) s
+5 428 M
+(        _sh = new StructuralHoles\(_ewl\);) s
+5 419 M
+(    }) s
+5 410 M
+(        ) s
+5 401 M
+(    public double readValue\(Vertex vquery\) {) s
+5 392 M
+(        double value = _sh.constraint\(vquery\);) s
+5 383 M
+(        return value;) s
+5 374 M
+(    }) s
+5 365 M
+(};) s
+_R
+S
+%%Page: (1) 13
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 1 def
+/fname (MeasurableEffectiveSize.java) def
+/fdir () def
+/ftail (MeasurableEffectiveSize.java) def
+% User defined strings:
+/fmodstr (Sun Aug 05 19:03:16 2007) def
+/pagenumstr (1) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 689 M
+(package netsci;) s
+5 671 M
+(import edu.uci.ics.jung.graph.*;) s
+5 662 M
+(import edu.uci.ics.jung.graph.impl.*;) s
+5 653 M
+(import edu.uci.ics.jung.algorithms.importance.*;) s
+5 644 M
+(import edu.uci.ics.jung.algorithms.cluster.*;) s
+5 635 M
+(import edu.uci.ics.jung.graph.decorators.*;) s
+5 626 M
+(import edu.uci.ics.jung.algorithms.metrics.*;) s
+5 617 M
+(import java.util.*;) s
+5 608 M
+(//import edu.uci.ics.jung.io.*;) s
+5 599 M
+(//import java.io.*;) s
+5 581 M
+(/**) s
+5 572 M
+( * A class representing measuring pagerank) s
+5 563 M
+( * ) s
+5 554 M
+( * @version     $$) s
+5 545 M
+( * @author      Bilal Khan) s
+5 536 M
+( */) s
+5 527 M
+(public class MeasurableEffectiveSize implements Measurable {) s
+5 509 M
+(    private final StructuralHoles _sh;) s
+5 500 M
+(    private final EdgeWeightLabeller _ewl;) s
+5 482 M
+(    MeasurableEffectiveSize\(Graph g\) {) s
+5 473 M
+(        _ewl = EdgeWeightLabeller.getLabeller\(g\);) s
+5 464 M
+(        for \(Iterator eit=g.getEdges\(\).iterator\(\); eit.hasNext\(\); \) {) s
+5 455 M
+(            Edge e = \(Edge\)eit.next\(\);) s
+5 446 M
+(            _ewl.setWeight\(e,1\);) s
+5 437 M
+(        }) s
+5 428 M
+(        _sh = new StructuralHoles\(_ewl\);) s
+5 419 M
+(    }) s
+5 410 M
+(        ) s
+5 401 M
+(    public double readValue\(Vertex vquery\) {) s
+5 392 M
+(        double value = _sh.effectiveSize\(vquery\);) s
+5 383 M
+(        return value;) s
+5 374 M
+(    }) s
+5 365 M
+(};) s
+_R
+S
+%%Page: (1) 14
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 1 def
+/fname (MeasurableHierarchy.java) def
+/fdir () def
+/ftail (MeasurableHierarchy.java) def
+% User defined strings:
+/fmodstr (Sun Aug 05 19:46:33 2007) def
+/pagenumstr (1) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 689 M
+(package netsci;) s
+5 671 M
+(import edu.uci.ics.jung.graph.*;) s
+5 662 M
+(import edu.uci.ics.jung.graph.impl.*;) s
+5 653 M
+(import edu.uci.ics.jung.algorithms.importance.*;) s
+5 644 M
+(import edu.uci.ics.jung.algorithms.cluster.*;) s
+5 635 M
+(import edu.uci.ics.jung.graph.decorators.*;) s
+5 626 M
+(import edu.uci.ics.jung.algorithms.metrics.*;) s
+5 617 M
+(import java.util.*;) s
+5 608 M
+(//import edu.uci.ics.jung.io.*;) s
+5 599 M
+(//import java.io.*;) s
+5 581 M
+(/**) s
+5 572 M
+( * A class representing measuring pagerank) s
+5 563 M
+( * ) s
+5 554 M
+( * @version     $$) s
+5 545 M
+( * @author      Bilal Khan) s
+5 536 M
+( */) s
+5 527 M
+(public class MeasurableHierarchy implements Measurable {) s
+5 509 M
+(    private final StructuralHoles _sh;) s
+5 500 M
+(    private final EdgeWeightLabeller _ewl;) s
+5 482 M
+(    MeasurableHierarchy\(Graph g\) {) s
+5 473 M
+(        _ewl = EdgeWeightLabeller.getLabeller\(g\);) s
+5 464 M
+(        for \(Iterator eit=g.getEdges\(\).iterator\(\); eit.hasNext\(\); \) {) s
+5 455 M
+(            Edge e = \(Edge\)eit.next\(\);) s
+5 446 M
+(            _ewl.setWeight\(e,1\);) s
+5 437 M
+(        }) s
+5 428 M
+(        _sh = new StructuralHoles\(_ewl\);) s
+5 419 M
+(    }) s
+5 410 M
+(        ) s
+5 401 M
+(    public double readValue\(Vertex vquery\) {) s
+5 392 M
+(        double value = _sh.hierarchy\(vquery\);) s
+5 383 M
+(        return value;) s
+5 374 M
+(    }) s
+5 365 M
+(};) s
+_R
+S
+%%Page: (1) 15
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 1 def
+/fname (MeasurableHubness.java) def
+/fdir () def
+/ftail (MeasurableHubness.java) def
+% User defined strings:
+/fmodstr (Thu Aug 09 16:13:09 2007) def
+/pagenumstr (1) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 689 M
+(package netsci;) s
+5 671 M
+(import edu.uci.ics.jung.graph.*;) s
+5 662 M
+(import edu.uci.ics.jung.graph.impl.*;) s
+5 653 M
+(import edu.uci.ics.jung.algorithms.importance.*;) s
+5 644 M
+(import edu.uci.ics.jung.algorithms.cluster.*;) s
+5 635 M
+(import java.util.*;) s
+5 626 M
+(//import edu.uci.ics.jung.io.*;) s
+5 617 M
+(//import java.io.*;) s
+5 599 M
+(/**) s
+5 590 M
+( * A class representing measuring hubness) s
+5 581 M
+( * ) s
+5 572 M
+( * @version     $$) s
+5 563 M
+( * @author      Bilal Khan) s
+5 554 M
+( */) s
+5 545 M
+(public class MeasurableHubness implements Measurable {) s
+5 527 M
+(    private final HITS _ranker;) s
+5 518 M
+(    private final List _rlist;) s
+5 500 M
+(    MeasurableHubness\(Graph g\) {) s
+5 491 M
+(        HITS ranker = new HITS\(g, false\); // don't use authority for ranking) s
+5 482 M
+(        _ranker = new HITS\(g\);) s
+5 473 M
+(        _ranker.setRemoveRankScoresOnFinalize\(false\);) s
+5 464 M
+(        _ranker.evaluate\(\);) s
+5 455 M
+(        _rlist = _ranker.getRankings\(\);) s
+5 446 M
+(    }) s
+5 437 M
+(        ) s
+5 428 M
+(    public double readValue\(Vertex vquery\) {) s
+5 419 M
+(        double value = -1.0;) s
+5 410 M
+(        for \(Iterator rlit=_rlist.iterator\(\); rlit.hasNext\(\); \) {) s
+5 401 M
+(            NodeRanking nr = \(NodeRanking\)rlit.next\(\);) s
+5 392 M
+(            Vertex rv = nr.vertex;) s
+5 383 M
+(            if \(rv==vquery\) {) s
+5 374 M
+(                value = nr.rankScore;) s
+5 365 M
+(                break;) s
+5 356 M
+(            }) s
+5 347 M
+(        }) s
+5 338 M
+(        return value;) s
+5 329 M
+(    }) s
+5 320 M
+(};) s
+_R
+S
+%%Page: (1) 16
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 1 def
+/fname (Measurable.java) def
+/fdir () def
+/ftail (Measurable.java) def
+% User defined strings:
+/fmodstr (Sat Aug 04 19:03:53 2007) def
+/pagenumstr (1) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 689 M
+(package netsci;) s
+5 671 M
+(import edu.uci.ics.jung.graph.*;) s
+5 662 M
+(import edu.uci.ics.jung.graph.impl.*;) s
+5 653 M
+(import java.util.*;) s
+5 644 M
+(//import edu.uci.ics.jung.io.*;) s
+5 635 M
+(//import java.io.*;) s
+5 617 M
+(/**) s
+5 608 M
+( * An interface representing a measurable quantity) s
+5 599 M
+( * ) s
+5 590 M
+( * @version     $$) s
+5 581 M
+( * @author      Bilal Khan) s
+5 572 M
+( */) s
+5 563 M
+(public interface Measurable {) s
+5 554 M
+(    public double readValue\(Vertex vquery\);) s
+5 545 M
+(};) s
+_R
+S
+%%Page: (1) 17
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 1 def
+/fname (RDSBiased.java) def
+/fdir () def
+/ftail (RDSBiased.java) def
+% User defined strings:
+/fmodstr (Wed Aug 08 23:39:49 2007) def
+/pagenumstr (1) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 689 M
+(package netsci;) s
+5 671 M
+(import edu.uci.ics.jung.graph.*;) s
+5 662 M
+(import edu.uci.ics.jung.graph.impl.*;) s
+5 653 M
+(import java.util.*;) s
+5 644 M
+(//import edu.uci.ics.jung.io.*;) s
+5 635 M
+(//import java.io.*;) s
+5 617 M
+(/**) s
+5 608 M
+( * Build an RDS tree on a graph starting from a randomly chosen set of) s
+5 599 M
+( * seeds.  The RDS tree is biased in the following way: a person) s
+5 590 M
+( * always gives out their coupons to \(previously undiscovered\)) s
+5 581 M
+( * individuals with the highest degree.) s
+5 572 M
+( * ) s
+5 563 M
+( * @version     $$) s
+5 554 M
+( * @author      Bilal Khan) s
+5 545 M
+( */) s
+5 536 M
+(public class RDSBiased extends RDS {) s
+5 518 M
+(    static class RDSBiasedIterator extends RDS.RDSIterator {) s
+5 500 M
+(        RDSBiasedIterator \(Graph g, int seeds\) {) s
+5 491 M
+(            super\(g, seeds\);) s
+5 482 M
+(        }) s
+5 464 M
+(        public Object next\(\) {) s
+5 455 M
+(            return new RDSBiased\(_g, _seeds\);) s
+5 446 M
+(        }) s
+5 428 M
+(        public void remove\(\) {) s
+5 419 M
+(            // no-op) s
+5 410 M
+(        }) s
+5 401 M
+(    }) s
+5 383 M
+(    public static Iterator iterator\(Graph g, int seeds\) {) s
+5 374 M
+(        return new RDSBiasedIterator\(g, seeds\);) s
+5 365 M
+(    }) s
+5 347 M
+(    private RDSBiased\(Graph g, int seeds\) {) s
+5 338 M
+(        super\(g, seeds\);) s
+5 329 M
+(    }) s
+5 311 M
+(    // overrides the updateMaxDeg in base RDS class) s
+5 302 M
+(    protected void updateMaxDeg\(Graph g, Vertex gv\) {) s
+5 284 M
+(        // GOAL: _gv2maxdeg\(gv\) should equal to the minimum G-degree) s
+5 275 M
+(        // over all RDS-nighbors of gv which were discovered after gv) s
+5 266 M
+(        // \(i.e. referrals by gv\)) s
+5 248 M
+(        // get all the G-neighbors of gv) s
+5 239 M
+(        Set e1 = gv.getInEdges\(\);) s
+5 230 M
+(        Set e2 = gv.getOutEdges\(\);) s
+5 221 M
+(        Set eall = new HashSet\(\);) s
+5 212 M
+(        eall.addAll\(e1\);) s
+5 203 M
+(        eall.addAll\(e2\);) s
+5 194 M
+(        Object earray[] = eall.toArray\(\);) s
+5 176 M
+(        // time gv was discovered) s
+5 167 M
+(        int gvtime = \(\(Integer\)_gv2time.get\(gv\)\).intValue\(\);) s
+5 149 M
+(        // we are doing a minimization) s
+5 140 M
+(        int maxdeg = 999;) s
+5 131 M
+(        ) s
+5 122 M
+(        // iterate over all G-neighbors of gv) s
+5 113 M
+(        for \(int i=0;i<earray.length; i++\) {) s
+5 104 M
+(            Edge e = \(Edge\)earray[i];) s
+5 95 M
+(            Vertex gu = e.getOpposite\(gv\);) s
+5 86 M
+(            Vertex ru = getRDSVertex\(gu\);) s
+5 77 M
+(            // but consider only RDS-neighbors of gv) s
+5 68 M
+(            if \(ru==null\) continue;) s
+5 50 M
+(            // System.out.println\("Considering "+gv+"-->"+gu+"  time="+_gv2time.get\(gu\)\);) s
+5 32 M
+(            // only consider children of gv \(not the parent\)) s
+5 23 M
+(            int gutime = \(\(Integer\)_gv2time.get\(gu\)\).intValue\(\);) s
+5 14 M
+(            if \(gutime < gvtime\) continue;) s
+_R
+S
+%%Page: (2) 18
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 2 def
+/fname (RDSBiased.java) def
+/fdir () def
+/ftail (RDSBiased.java) def
+% User defined strings:
+/fmodstr (Wed Aug 08 23:39:49 2007) def
+/pagenumstr (2) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 689 M
+(            // get the G-degree of the RDS-neighbor) s
+5 680 M
+(            int degu = gu.getInEdges\(\).size\(\) + gu.getOutEdges\(\).size\(\);) s
+5 662 M
+(            // keep track of the minimum G-degree seen) s
+5 653 M
+(            if \(degu < maxdeg\) {) s
+5 644 M
+(                maxdeg = degu;) s
+5 635 M
+(            }) s
+5 626 M
+(        }) s
+5 617 M
+(        ) s
+5 608 M
+(        // System.out.println\("Maxdeg "+gv+"-->"+maxdeg\);) s
+5 599 M
+(        // save the value) s
+5 590 M
+(        _gv2maxdeg.put\(gv, new Integer\(maxdeg\)\);) s
+5 581 M
+(    }) s
+5 563 M
+(    // overrides the getRandomNeighborGraphVertex in base RDS class) s
+5 554 M
+(    protected Vertex getRandomNeighborGraphVertex\(Graph g, Vertex gv\) {) s
+5 545 M
+(        Set e1 = gv.getInEdges\(\);) s
+5 536 M
+(        Set e2 = gv.getOutEdges\(\);) s
+5 527 M
+(        Set eall = new HashSet\(\);) s
+5 518 M
+(        eall.addAll\(e1\);) s
+5 509 M
+(        eall.addAll\(e2\);) s
+5 500 M
+(        Object earray[] = eall.toArray\(\);) s
+5 482 M
+(        // find the neighbor of gv that is both undiscovered and has) s
+5 473 M
+(        // the highest degree) s
+5 464 M
+(        int maxdeg = -1;) s
+5 455 M
+(        Vertex answer = null;) s
+5 446 M
+(        for \(int i=0;i<earray.length; i++\) {) s
+5 437 M
+(            Edge e = \(Edge\)earray[i];) s
+5 428 M
+(            Vertex gu = e.getOpposite\(gv\);) s
+5 419 M
+(            Vertex ru = getRDSVertex\(gu\);) s
+5 410 M
+(            // must be undiscovered) s
+5 401 M
+(            if \(ru!=null\) continue;) s
+5 383 M
+(            int degu = gu.getInEdges\(\).size\(\) + gu.getOutEdges\(\).size\(\);) s
+5 374 M
+(            if \(degu > maxdeg\) {) s
+5 365 M
+(                // save the one with the highest degree) s
+5 356 M
+(                maxdeg = degu;) s
+5 347 M
+(                answer = gu;) s
+5 338 M
+(            }) s
+5 329 M
+(        }) s
+5 320 M
+(        if \(answer==null\) {) s
+5 311 M
+(            System.out.println\("ERROR answer=null for vertex "+gv\);) s
+5 302 M
+(            System.out.println\("ERROR isDeadGraphVertex\(g, gv\) = "+isDeadGraphVertex\(g, gv\)\);) s
+5 293 M
+(            System.exit\(0\);) s
+5 284 M
+(        }) s
+5 266 M
+(        return answer;) s
+5 257 M
+(    }) s
+5 239 M
+(    public String toString\(\) {) s
+5 230 M
+(        int v = _rds.numVertices\(\);) s
+5 221 M
+(        int e = _rds.numEdges\(\);) s
+5 212 M
+(        String s = "RDSBiased vertices="+v+",  edges="+e;) s
+5 203 M
+(        return s;) s
+5 194 M
+(    }) s
+5 185 M
+(};) s
+_R
+S
+%%Page: (1) 19
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 1 def
+/fname (RDS.java) def
+/fdir () def
+/ftail (RDS.java) def
+% User defined strings:
+/fmodstr (Thu Aug 09 11:48:59 2007) def
+/pagenumstr (1) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 689 M
+(package netsci;) s
+5 671 M
+(import edu.uci.ics.jung.graph.*;) s
+5 662 M
+(import edu.uci.ics.jung.graph.impl.*;) s
+5 653 M
+(import java.util.*;) s
+5 644 M
+(//import edu.uci.ics.jung.io.*;) s
+5 635 M
+(//import java.io.*;) s
+5 617 M
+(/**) s
+5 608 M
+( * Build an RDS tree on a graph starting from a randomly chosen set of seeds.) s
+5 599 M
+( * ) s
+5 590 M
+( * @version     $$) s
+5 581 M
+( * @author      Bilal Khan) s
+5 572 M
+( */) s
+5 563 M
+(public class RDS {) s
+5 545 M
+(    // debugging) s
+5 536 M
+(    protected static final boolean DEBUG = false;) s
+5 518 M
+(    // RDS degree) s
+5 509 M
+(    protected static final int REFERRALS = 3;) s
+5 491 M
+(    // the RDS graph) s
+5 482 M
+(    final Graph _rds;) s
+5 464 M
+(    // A map from graph vertex to time of discovery) s
+5 455 M
+(    HashMap _gv2time = new HashMap\(\);) s
+5 437 M
+(    // The current time) s
+5 428 M
+(    int _time = 0;) s
+5 410 M
+(    // A map from graph vertex to maximum permissable degree of ) s
+5 401 M
+(    // neighbors in the completion \(excluding RDS neighbors\)) s
+5 392 M
+(    HashMap _gv2maxdeg = new HashMap\(\);) s
+5 374 M
+(    // initial seeds) s
+5 365 M
+(    final Set _seeds = new HashSet\(\);) s
+5 347 M
+(    // vertices of G that the RDS has discovered) s
+5 338 M
+(    protected final Set _discovered = new HashSet\(\);) s
+5 329 M
+(    ) s
+5 320 M
+(    // the frontier of RDS) s
+5 311 M
+(    protected final LinkedList _frontier = new LinkedList\(\);) s
+5 293 M
+(    // tables to convert from graph to RDS vertices and back) s
+5 284 M
+(    protected final Map _lutg2r = new HashMap\(\);) s
+5 275 M
+(    protected final Map _lutr2g = new HashMap\(\);) s
+5 248 M
+(    // An iterator over RDS trees) s
+5 239 M
+(    static class RDSIterator implements Iterator {) s
+5 221 M
+(        protected Graph _g;) s
+5 212 M
+(        protected int _seeds;) s
+5 203 M
+(        ) s
+5 194 M
+(        RDSIterator \(Graph g, int seeds\) {) s
+5 185 M
+(            _g = g;) s
+5 176 M
+(            _seeds = seeds;) s
+5 167 M
+(        }) s
+5 149 M
+(        public boolean hasNext\(\) {) s
+5 140 M
+(            return true;) s
+5 131 M
+(        }) s
+5 113 M
+(        public Object next\(\) {) s
+5 104 M
+(            return new RDS\(_g, _seeds\);) s
+5 95 M
+(        }) s
+5 77 M
+(        public void remove\(\) {) s
+5 68 M
+(            // no-op) s
+5 59 M
+(        }) s
+5 50 M
+(    }) s
+5 32 M
+(    // static factor method to make an iterator over RDS trees) s
+5 23 M
+(    public static Iterator iterator\(Graph g, int seeds\) {) s
+5 14 M
+(        return new RDSIterator\(g, seeds\);) s
+5 5 M
+(    }) s
+_R
+S
+%%Page: (2) 20
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 2 def
+/fname (RDS.java) def
+/fdir () def
+/ftail (RDS.java) def
+% User defined strings:
+/fmodstr (Thu Aug 09 11:48:59 2007) def
+/pagenumstr (2) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 680 M
+(    private boolean _virgin = true;) s
+5 662 M
+(    protected Vertex getNewSeed\(Graph g\) {) s
+5 653 M
+(        Vertex gv, rv;) s
+5 635 M
+(        if \(_virgin\) {) s
+5 626 M
+(            // first seed always lies in the big component) s
+5 617 M
+(            gv = Test.getBigCompSeed\(g\);) s
+5 608 M
+(            _virgin = false;) s
+5 599 M
+(        }) s
+5 590 M
+(        else {) s
+5 581 M
+(            // get a new previously unused seed) s
+5 572 M
+(            do {) s
+5 563 M
+(                gv = getRandomGraphVertex\(g\);) s
+5 554 M
+(                // see if its already been used as a seed) s
+5 545 M
+(                rv = getRDSVertex\(gv\);) s
+5 536 M
+(            }) s
+5 527 M
+(            while \(rv != null\);) s
+5 518 M
+(        }) s
+5 509 M
+(        return gv;) s
+5 500 M
+(    }) s
+5 482 M
+(    protected void initializeSeeds\(Graph g, int seeds\) {) s
+5 473 M
+(        // initialize the seeds) s
+5 464 M
+(        for \(int i=0;i<seeds;i++\) {) s
+5 455 M
+(            // get a new seed) s
+5 446 M
+(            Vertex gv = getNewSeed\(g\);) s
+5 428 M
+(            // make the new RDS vertex) s
+5 419 M
+(            Vertex rv = new SimpleUndirectedSparseVertex\(\);) s
+5 401 M
+(            // save a bidirectional mapping between graph and RDS vertices) s
+5 392 M
+(            _lutg2r.put\(gv, rv\);) s
+5 383 M
+(            _lutr2g.put\(rv, gv\);) s
+5 365 M
+(            // add the seed to the RDS tree) s
+5 356 M
+(            _seeds.add\(rv\);) s
+5 347 M
+(            _rds.addVertex\(rv\);) s
+5 338 M
+(            if \(DEBUG\) System.out.println\("Added seed: "+gv\);) s
+5 320 M
+(            // note the discovery time = 0) s
+5 311 M
+(            _gv2time.put\(gv, new Integer\(0\)\);) s
+5 293 M
+(            // initially the frontier consists of just seeds) s
+5 284 M
+(            _frontier.addLast\(rv\);) s
+5 266 M
+(            // seeds are considered already discovered) s
+5 257 M
+(            _discovered.add\(rv\);) s
+5 239 M
+(            // update maxDegree) s
+5 230 M
+(            updateMaxDeg\(g, gv\);) s
+5 221 M
+(        }) s
+5 212 M
+(    }) s
+5 194 M
+(    protected Vertex getNextFrontierVertex\(Graph g\) {) s
+5 185 M
+(        Vertex rv = null;) s
+5 176 M
+(        Vertex gv = null;) s
+5 167 M
+(        boolean found = false;) s
+5 158 M
+(        while \(_frontier.size\(\) > 0\) {) s
+5 149 M
+(            rv = \(Vertex\)_frontier.removeFirst\(\);) s
+5 140 M
+(            gv = getGraphVertex\(rv\);) s
+5 131 M
+(            if \(DEBUG\) System.out.println\("Growing from = "+gv\);) s
+5 122 M
+(            if \(isDeadGraphVertex\(g, gv\)\) {) s
+5 113 M
+(                // the frontier vertex is dead, no need to reschedule it...) s
+5 104 M
+(                if \(DEBUG\) System.out.println\("    All \("+gv.inDegree\(\)+"\) neighbors of "+gv+" in G have been) s
+5 95 M
+( discovered, it's dead"\);) s
+5 86 M
+(                continue;) s
+5 77 M
+(            }) s
+5 68 M
+(            else { // we found a non-dead frontier vertex!) s
+5 59 M
+(                if \(isSaturatedRDSVertex\(rv\)\) {) s
+5 50 M
+(                    // if the frontier vertex is rds saturated, continue) s
+5 41 M
+(                    if \(DEBUG\) System.out.println\("    Done growing from "+rv+" All \("+rv.inDegree\(\)+"\) RDS-n) s
+5 32 M
+(eighbors have been selected"\);) s
+5 23 M
+(                    continue;) s
+5 14 M
+(                }) s
+5 5 M
+(                else {) s
+_R
+S
+%%Page: (3) 21
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 3 def
+/fname (RDS.java) def
+/fdir () def
+/ftail (RDS.java) def
+% User defined strings:
+/fmodstr (Thu Aug 09 11:48:59 2007) def
+/pagenumstr (3) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 689 M
+(                    // not dead, not saturated) s
+5 680 M
+(                    _frontier.addLast\(rv\);) s
+5 671 M
+(                    found = true;) s
+5 662 M
+(                    break;) s
+5 653 M
+(                }) s
+5 644 M
+(            }) s
+5 635 M
+(        }) s
+5 617 M
+(        if \(found==false\) {) s
+5 608 M
+(            return null;) s
+5 599 M
+(        }) s
+5 590 M
+(        else {) s
+5 581 M
+(            if \(isDeadGraphVertex\(g,gv\)\) {) s
+5 572 M
+(                System.out.println\("FRONTIER ERROR Dead vertex "+gv+" has no neighbors!"\);) s
+5 563 M
+(                System.exit\(0\);) s
+5 554 M
+(            }) s
+5 545 M
+(            if \(isSaturatedRDSVertex\(rv\)\) {) s
+5 536 M
+(                System.out.println\("FRONTIER ERROR Saturated vertex "+rv+" needs no neighbors!"\);) s
+5 527 M
+(                System.exit\(0\);) s
+5 518 M
+(            }) s
+5 509 M
+(            return rv;) s
+5 500 M
+(        }) s
+5 491 M
+(    }) s
+5 473 M
+(    protected void printFrontier\(\) {) s
+5 464 M
+(        System.out.print\("Frontier = ["\);) s
+5 455 M
+(        for \(Iterator it2=_frontier.iterator\(\);it2.hasNext\(\);\) {) s
+5 446 M
+(            Vertex fv=\(Vertex\)it2.next\(\);) s
+5 437 M
+(            System.out.print\(""+fv+","\);) s
+5 428 M
+(        }) s
+5 419 M
+(        System.out.println\("]"\);) s
+5 410 M
+(    }) s
+5 392 M
+(    protected void grow\(Graph g, Vertex rv\) {) s
+5 383 M
+(        // get the graph vertex corresponding to rv) s
+5 374 M
+(        Vertex gv = getGraphVertex\(rv\);) s
+5 365 M
+(        // find a random yet undiscovered neighbor) s
+5 356 M
+(        Vertex gu = null;) s
+5 347 M
+(        Vertex ru = null;) s
+5 338 M
+(        do {) s
+5 329 M
+(            gu = getRandomNeighborGraphVertex\(g,gv\);) s
+5 320 M
+(            ru = getRDSVertex\(gu\);) s
+5 311 M
+(            // System.out.println\("Considering neighbor = "+ru\);) s
+5 302 M
+(        }) s
+5 293 M
+(        while \( ru != null \);) s
+5 275 M
+(        // add the discovered vertex) s
+5 266 M
+(        ru = new SimpleUndirectedSparseVertex\(\);) s
+5 248 M
+(        // save a bidirectional mapping) s
+5 239 M
+(        _lutg2r.put\(gu, ru\);) s
+5 230 M
+(        _lutr2g.put\(ru, gu\);) s
+5 212 M
+(        // add ru to the RDS tree) s
+5 203 M
+(        _rds.addVertex\(ru\);) s
+5 185 M
+(        // note the discovery time) s
+5 176 M
+(        _time++;) s
+5 167 M
+(        _gv2time.put\(gu, new Integer\(_time\)\);) s
+5 158 M
+(        if \(DEBUG\) System.out.println\("Added vertex: "+gu\);) s
+5 140 M
+(        // augment the frontier and discovered sets) s
+5 131 M
+(        _discovered.add\(ru\);) s
+5 122 M
+(        _frontier.add\(ru\);) s
+5 104 M
+(        // add the edge) s
+5 95 M
+(        UndirectedSparseEdge e = new UndirectedSparseEdge\(rv,ru\);) s
+5 86 M
+(        _rds.addEdge\(e\);) s
+5 68 M
+(        // update the max degree information ) s
+5 59 M
+(        updateMaxDeg\(g, gv\);) s
+5 50 M
+(        updateMaxDeg\(g, gu\);) s
+5 32 M
+(        if \(DEBUG\) System.out.println\("Added edge: "+rv+"-->"+ru\);) s
+5 23 M
+(    }) s
+5 5 M
+(    protected RDS\(Graph g, int seeds\) {) s
+_R
+S
+%%Page: (4) 22
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 4 def
+/fname (RDS.java) def
+/fdir () def
+/ftail (RDS.java) def
+% User defined strings:
+/fmodstr (Thu Aug 09 11:48:59 2007) def
+/pagenumstr (4) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 689 M
+(        // the time is zero) s
+5 680 M
+(        _time = 0;) s
+5 662 M
+(        // the RDS tree is a new graph) s
+5 653 M
+(        _rds = new UndirectedSparseGraph\(\);) s
+5 635 M
+(        // add the seeds to the RDS tree, initializing the frontier) s
+5 626 M
+(        initializeSeeds\(g, seeds\);) s
+5 608 M
+(        // Add the vertices of g to the RDS tree) s
+5 599 M
+(        Vertex rv;) s
+5 590 M
+(        while \(\(rv = getNextFrontierVertex\(g\)\) != null\) {) s
+5 581 M
+(            grow\(g, rv\);) s
+5 572 M
+(        }) s
+5 563 M
+(    }) s
+5 545 M
+(    Vertex getRDSVertex\(Vertex gv\) {) s
+5 536 M
+(        return \(Vertex\)_lutg2r.get\(gv\);) s
+5 527 M
+(    }) s
+5 509 M
+(    Vertex getGraphVertex\(Vertex rv\) {) s
+5 500 M
+(        return \(Vertex\)_lutr2g.get\(rv\);) s
+5 491 M
+(    }) s
+5 473 M
+(    static Vertex getRandomGraphVertex\(Graph g\) {) s
+5 464 M
+(        Set vset = g.getVertices\(\);) s
+5 455 M
+(        Object[] varray = vset.toArray\(\);) s
+5 446 M
+(        int r = \(int\)\(Math.random\(\) * varray.length\);) s
+5 437 M
+(        Vertex v = \(Vertex\)varray[r];) s
+5 428 M
+(        return v;) s
+5 419 M
+(    }) s
+5 401 M
+(    protected boolean isSaturatedRDSVertex\(Vertex rv\) {) s
+5 392 M
+(        if \(_seeds.contains\(rv\)\) {) s
+5 383 M
+(            if \(rv.inDegree\(\)==REFERRALS\) return true;) s
+5 374 M
+(            else return false;) s
+5 365 M
+(        }) s
+5 356 M
+(        else  {) s
+5 347 M
+(            if \(rv.inDegree\(\)==REFERRALS+1\) return true;) s
+5 338 M
+(            else return false;) s
+5 329 M
+(        }) s
+5 320 M
+(    }) s
+5 302 M
+(    protected boolean isDeadGraphVertex\(Graph g, Vertex gv\) {) s
+5 293 M
+(        Set e1 = gv.getInEdges\(\);) s
+5 284 M
+(        Set e2 = gv.getOutEdges\(\);) s
+5 275 M
+(        Set eall = new HashSet\(\);) s
+5 266 M
+(        eall.addAll\(e1\);) s
+5 257 M
+(        eall.addAll\(e2\);) s
+5 239 M
+(        Object earray[] = eall.toArray\(\);) s
+5 230 M
+(        if \(DEBUG\) System.out.println\("Num neighbors="+earray.length\);) s
+5 212 M
+(        for \(int i=0; i<earray.length; i++\) {) s
+5 203 M
+(            Edge e = \(Edge\)earray[i];) s
+5 194 M
+(            Vertex gu = e.getOpposite\(gv\);) s
+5 185 M
+(            Vertex ru = getRDSVertex\(gu\);) s
+5 167 M
+(            // we found an undiscovered neighbor, ) s
+5 158 M
+(            // so this vertex isn't dead) s
+5 149 M
+(            if \(ru==null\) {) s
+5 140 M
+(                // System.out.println\("Neighbor="+ru\);) s
+5 131 M
+(                return false;) s
+5 122 M
+(            }) s
+5 113 M
+(        }) s
+5 104 M
+(        // all neighbors are already discovered) s
+5 95 M
+(        // so this vertex is dead) s
+5 86 M
+(        return true;) s
+5 77 M
+(    }) s
+5 59 M
+(    protected void updateMaxDeg\(Graph g, Vertex gv\) {) s
+5 50 M
+(        // no op) s
+5 41 M
+(    }) s
+5 23 M
+(    protected Vertex getRandomNeighborGraphVertex\(Graph g, Vertex gv\) {) s
+5 5 M
+(        if \(isDeadGraphVertex\(g,gv\)\) {) s
+_R
+S
+%%Page: (5) 23
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 5 def
+/fname (RDS.java) def
+/fdir () def
+/ftail (RDS.java) def
+% User defined strings:
+/fmodstr (Thu Aug 09 11:48:59 2007) def
+/pagenumstr (5) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 689 M
+(            System.out.println\("ERROR Dead vertex has no neighbors!"\);) s
+5 680 M
+(            System.exit\(0\);) s
+5 671 M
+(        }) s
+5 653 M
+(        Set e1 = gv.getInEdges\(\);) s
+5 644 M
+(        Set e2 = gv.getOutEdges\(\);) s
+5 635 M
+(        Set eall = new HashSet\(\);) s
+5 626 M
+(        eall.addAll\(e1\);) s
+5 617 M
+(        eall.addAll\(e2\);) s
+5 608 M
+(        Object earray[] = eall.toArray\(\);) s
+5 599 M
+(        int r = \(int\)\(Math.random\(\) * earray.length\);) s
+5 590 M
+(        Edge e = \(Edge\)earray[r];) s
+5 581 M
+(        Vertex gu = e.getOpposite\(gv\);) s
+5 572 M
+(        return gu;) s
+5 563 M
+(    }) s
+5 545 M
+(    public String toString\(\) {) s
+5 536 M
+(        int v = _rds.numVertices\(\);) s
+5 527 M
+(        int e = _rds.numEdges\(\);) s
+5 518 M
+(        String s = "RDS vertices="+v+",  edges="+e;) s
+5 509 M
+(        return s;) s
+5 500 M
+(    }) s
+5 491 M
+(};) s
+_R
+S
+%%Page: (1) 24
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 1 def
+/fname (Stats.java) def
+/fdir () def
+/ftail (Stats.java) def
+% User defined strings:
+/fmodstr (Thu Aug 09 16:45:57 2007) def
+/pagenumstr (1) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 689 M
+(package netsci;) s
+5 671 M
+(import edu.uci.ics.jung.io.*;) s
+5 662 M
+(import edu.uci.ics.jung.graph.*;) s
+5 653 M
+(import java.io.*;) s
+5 644 M
+(import java.util.*;) s
+5 635 M
+(import java.text.DecimalFormat;) s
+5 617 M
+(/**) s
+5 608 M
+( * A class to collect measurements of the graph's vertices and) s
+5 599 M
+( * aggregate statistics about the vertices of the completions) s
+5 590 M
+( * ) s
+5 581 M
+( * @version     $$) s
+5 572 M
+( * @author      Bilal Khan) s
+5 563 M
+( */) s
+5 554 M
+(public class Stats {) s
+5 536 M
+(    // map from G vertices to their measures) s
+5 527 M
+(    private HashMap _g_rank = new HashMap\(\);) s
+5 518 M
+(    // map from completion vertices to their accumulated measures) s
+5 509 M
+(    private HashMap _c_rank_accum = new HashMap\(\);) s
+5 500 M
+(    // map from completion vertices to number of measurements) s
+5 491 M
+(    private HashMap _c_rank_ct = new HashMap\(\);) s
+5 473 M
+(    // initialize the data structures for a given vertex) s
+5 464 M
+(    public void initialize\(Vertex vquery_g, double val1\) {) s
+5 455 M
+(        _g_rank.put\(vquery_g, new Double\(val1\)\);) s
+5 446 M
+(        _c_rank_accum.put\(vquery_g, new Double\(0.0\)\);) s
+5 437 M
+(        _c_rank_ct.put\(vquery_g, new Double\(0.0\)\);) s
+5 428 M
+(    }) s
+5 410 M
+(    // accumulate the measure of a vertex in the completion) s
+5 401 M
+(    public void accum\(Vertex vquery_g, double val3\) {   ) s
+5 392 M
+(        _c_rank_accum.put\(vquery_g, new Double\(\(\(Double\)_c_rank_accum.get\(vquery_g\)\).doubleValue\(\)+val3\)\);) s
+5 383 M
+(        _c_rank_ct.put\(vquery_g, new Double\(\(\(Double\)_c_rank_ct.get\(vquery_g\)\).doubleValue\(\)+1.0\)\);) s
+5 374 M
+(    }) s
+5 356 M
+(    // get the measure of a vertex in G) s
+5 347 M
+(    public double get_grank\(Vertex vquery_g\) {  ) s
+5 338 M
+(        Double grank = \(Double\)_g_rank.get\(vquery_g\);) s
+5 329 M
+(        return grank.doubleValue\(\);) s
+5 320 M
+(    }) s
+5 302 M
+(    // get the number of measures taken for a vertex \(in the completions\)) s
+5 293 M
+(    public double get_count\(Vertex vquery_g\) {) s
+5 284 M
+(        Double ctr = \(Double\)_c_rank_ct.get\(vquery_g\);) s
+5 275 M
+(        return ctr.doubleValue\(\);) s
+5 266 M
+(    }) s
+5 248 M
+(    // get the mean measures taken for a vertex \(in the completions\)) s
+5 239 M
+(    public double get_crank\(Vertex vquery_g\) throws Exception {) s
+5 230 M
+(        double ctr =  get_count\(vquery_g\);) s
+5 221 M
+(        if \(ctr == 0.0\) {) s
+5 212 M
+(            throw new Exception\("No data about this vertex..."\);) s
+5 203 M
+(        }) s
+5 194 M
+(        Double crank = \(Double\)_c_rank_accum.get\(vquery_g\);) s
+5 185 M
+(        return crank.doubleValue\(\)/ctr;) s
+5 176 M
+(    }) s
+5 149 M
+(    // If I were to rank the vertices of the completion\(s\) by their) s
+5 140 M
+(    // G-rank, and then ask for the cutoff value of G-rank which would) s
+5 131 M
+(    // separate the top cutoff% from the rest, what would this cutoff) s
+5 122 M
+(    // value be?) s
+5 113 M
+(    public double get_grank_threshold\(double cutoff, Graph g\) {) s
+5 95 M
+(        double grank_threshold = -1.0;) s
+5 77 M
+(        TreeMap rank2list = new TreeMap\(\);) s
+5 68 M
+(        Set vset = g.getVertices\(\);) s
+5 59 M
+(        int n = 0;) s
+5 41 M
+(        for \(Iterator vit= vset.iterator\(\); vit.hasNext\(\); \) {) s
+5 32 M
+(            Vertex vquery_g = \(Vertex\)vit.next\(\);) s
+5 23 M
+(            // if we don't have completion data skip it) s
+5 14 M
+(            if \(get_count\(vquery_g\)<1.0\) {) s
+5 5 M
+(                continue;) s
+_R
+S
+%%Page: (2) 25
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 2 def
+/fname (Stats.java) def
+/fdir () def
+/ftail (Stats.java) def
+% User defined strings:
+/fmodstr (Thu Aug 09 16:45:57 2007) def
+/pagenumstr (2) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 689 M
+(            }) s
+5 680 M
+(            n++;) s
+5 662 M
+(            double sval = get_grank\(vquery_g\);) s
+5 653 M
+(            Double score = new Double\(sval\);) s
+5 644 M
+(            LinkedList lst = \(LinkedList\)rank2list.get\(score\);) s
+5 635 M
+(            if \(lst==null\) {) s
+5 626 M
+(                lst = new LinkedList\(\);) s
+5 617 M
+(                rank2list.put\(score,lst\);) s
+5 608 M
+(                // System.out.println\("new list for score="+score\);) s
+5 599 M
+(            }) s
+5 590 M
+(            lst.addLast\(vquery_g\);) s
+5 581 M
+(        }) s
+5 563 M
+(        int n_cutoff = \(int\)\(\(double\)n*cutoff\);) s
+5 545 M
+(        //System.out.println\("n="+n\);) s
+5 536 M
+(        //System.out.println\("n_cutoff="+n_cutoff\);) s
+5 518 M
+(        int ct=0;) s
+5 509 M
+(        for \(Iterator vit= rank2list.entrySet\(\).iterator\(\); vit.hasNext\(\); \) {) s
+5 500 M
+(            Map.Entry ent = \(Map.Entry\)vit.next\(\);) s
+5 491 M
+(            Double score = \(Double\)ent.getKey\(\);) s
+5 482 M
+(            LinkedList lst = \(LinkedList\)ent.getValue\(\);) s
+5 473 M
+(            ct += lst.size\(\);) s
+5 455 M
+(            // System.out.println\("ct="+ct+", score="+score\);) s
+5 437 M
+(            if \(ct > n_cutoff\) {) s
+5 428 M
+(                grank_threshold = score.doubleValue\(\);) s
+5 419 M
+(                break;) s
+5 410 M
+(            }) s
+5 401 M
+(        }) s
+5 383 M
+(        return grank_threshold;) s
+5 374 M
+(    }) s
+5 356 M
+(    public double get_crank_threshold\(double cutoff, Graph g\) {) s
+5 338 M
+(        double crank_threshold = -1.0;) s
+5 320 M
+(        TreeMap rank2list = new TreeMap\(\);) s
+5 311 M
+(        Set vset = g.getVertices\(\);) s
+5 302 M
+(        int n = 0;) s
+5 284 M
+(        for \(Iterator vit= vset.iterator\(\); vit.hasNext\(\); \) {) s
+5 275 M
+(            Vertex vquery_g = \(Vertex\)vit.next\(\);) s
+5 266 M
+(            // if we don't have completion data skip it) s
+5 257 M
+(            if \(get_count\(vquery_g\)<1.0\) {) s
+5 248 M
+(                continue;) s
+5 239 M
+(            }) s
+5 230 M
+(            n++;) s
+5 212 M
+(            double sval;) s
+5 203 M
+(            try {) s
+5 194 M
+(                sval = get_crank\(vquery_g\);) s
+5 185 M
+(            }) s
+5 176 M
+(            catch \(Exception ex\) {) s
+5 167 M
+(                // no data on this vertex) s
+5 158 M
+(                continue;) s
+5 149 M
+(            }) s
+5 140 M
+(            Double score = new Double\(sval\);) s
+5 122 M
+(            LinkedList lst = \(LinkedList\)rank2list.get\(score\);) s
+5 113 M
+(            if \(lst==null\) {) s
+5 104 M
+(                lst = new LinkedList\(\);) s
+5 95 M
+(                rank2list.put\(score,lst\);) s
+5 86 M
+(                // System.out.println\("new list for score="+score\);) s
+5 77 M
+(            }) s
+5 68 M
+(            lst.addLast\(vquery_g\);) s
+5 59 M
+(        }) s
+5 41 M
+(        int n_cutoff = \(int\)\(\(double\)n*cutoff\);) s
+5 23 M
+(        //System.out.println\("n="+n\);) s
+5 14 M
+(        //System.out.println\("n_cutoff="+n_cutoff\);) s
+_R
+S
+%%Page: (3) 26
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 3 def
+/fname (Stats.java) def
+/fdir () def
+/ftail (Stats.java) def
+% User defined strings:
+/fmodstr (Thu Aug 09 16:45:57 2007) def
+/pagenumstr (3) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 689 M
+(        int ct=0;) s
+5 680 M
+(        for \(Iterator vit= rank2list.entrySet\(\).iterator\(\); vit.hasNext\(\); \) {) s
+5 671 M
+(            Map.Entry ent = \(Map.Entry\)vit.next\(\);) s
+5 662 M
+(            Double score = \(Double\)ent.getKey\(\);) s
+5 653 M
+(            LinkedList lst = \(LinkedList\)ent.getValue\(\);) s
+5 644 M
+(            ct += lst.size\(\);) s
+5 626 M
+(            // System.out.println\("ct="+ct+", score="+score\);) s
+5 608 M
+(            if \(ct > n_cutoff\) {) s
+5 599 M
+(                crank_threshold = score.doubleValue\(\);) s
+5 590 M
+(                break;) s
+5 581 M
+(            }) s
+5 572 M
+(        }) s
+5 554 M
+(        return crank_threshold;) s
+5 545 M
+(    }) s
+5 527 M
+(    public LinkedList filterVertices_min_grank\(Graph g, double min_grank\) {) s
+5 518 M
+(        LinkedList lst = new LinkedList\(\);) s
+5 509 M
+(        Set vset = g.getVertices\(\);) s
+5 500 M
+(        for \(Iterator vit= vset.iterator\(\); vit.hasNext\(\); \) {) s
+5 491 M
+(            Vertex vquery_g = \(Vertex\)vit.next\(\);) s
+5 482 M
+(            // if we don't have completion data skip it) s
+5 473 M
+(            if \(get_count\(vquery_g\)<1.0\) {) s
+5 464 M
+(                continue;) s
+5 455 M
+(            }) s
+5 446 M
+(            double sval = get_grank\(vquery_g\);) s
+5 437 M
+(            if \(sval > min_grank\) {) s
+5 428 M
+(                lst.addLast\(vquery_g\);) s
+5 419 M
+(            }) s
+5 410 M
+(        }) s
+5 401 M
+(        return lst;) s
+5 392 M
+(    }) s
+5 374 M
+(    public LinkedList filterVertices_min_crank\(Graph g, double min_crank\) {) s
+5 365 M
+(        LinkedList lst = new LinkedList\(\);) s
+5 356 M
+(        Set vset = g.getVertices\(\);) s
+5 347 M
+(        for \(Iterator vit= vset.iterator\(\); vit.hasNext\(\); \) {) s
+5 338 M
+(            Vertex vquery_g = \(Vertex\)vit.next\(\);) s
+5 329 M
+(            // if we don't have completion data skip it) s
+5 320 M
+(            if \(get_count\(vquery_g\)<1.0\) {) s
+5 311 M
+(                continue;) s
+5 302 M
+(            }) s
+5 293 M
+(            double sval;) s
+5 284 M
+(            try {) s
+5 275 M
+(                sval = get_crank\(vquery_g\);) s
+5 266 M
+(            }) s
+5 257 M
+(            catch \(Exception ex\) {) s
+5 248 M
+(                // no data on this vertex) s
+5 239 M
+(                continue;) s
+5 230 M
+(            }) s
+5 221 M
+(            if \(sval > min_crank\) {) s
+5 212 M
+(                lst.addLast\(vquery_g\);) s
+5 203 M
+(            }) s
+5 194 M
+(        }) s
+5 185 M
+(        return lst;) s
+5 176 M
+(    }) s
+5 158 M
+(    public String error\(Graph g, double th\) {) s
+5 149 M
+(        double thg = get_grank_threshold\(th, g\);) s
+5 140 M
+(        double thc = get_crank_threshold\(th, g\);) s
+5 131 M
+(        LinkedList glist = filterVertices_min_grank\(g, thg\);) s
+5 122 M
+(        LinkedList clist = filterVertices_min_crank\(g, thc\);) s
+5 113 M
+(        clist.removeAll\(glist\);) s
+5 104 M
+(        double err = \(double\)clist.size\(\)/\(double\)glist.size\(\);) s
+5 95 M
+(        String s = \(""+Test.twoPlaces.format\(th\)+) s
+5 86 M
+(                    "\\t"+Test.twoPlaces.format\(err\)+) s
+5 77 M
+(                    "\\t|\\t"+glist.size\(\)+"\\t"+) s
+5 68 M
+(                    Test.twoPlaces.format\(thg\)+"\\t|\\t"+) s
+5 59 M
+(                    clist.size\(\)+"\\t"+) s
+5 50 M
+(                    Test.twoPlaces.format\(thc\)\);) s
+5 41 M
+(        return s;) s
+5 32 M
+(    }) s
+5 14 M
+(    public double pearson\(Graph g\) {) s
+5 5 M
+(        Set vset = g.getVertices\(\);) s
+_R
+S
+%%Page: (4) 27
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 4 def
+/fname (Stats.java) def
+/fdir () def
+/ftail (Stats.java) def
+% User defined strings:
+/fmodstr (Thu Aug 09 16:45:57 2007) def
+/pagenumstr (4) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 689 M
+(        int N = 0;) s
+5 680 M
+(        for \(Iterator vit= vset.iterator\(\); vit.hasNext\(\); \) {) s
+5 671 M
+(            Vertex vquery_g = \(Vertex\)vit.next\(\);) s
+5 662 M
+(            // if we don't have completion data skip it) s
+5 653 M
+(            if \(get_count\(vquery_g\)<1.0\) {) s
+5 644 M
+(                continue;) s
+5 635 M
+(            }) s
+5 626 M
+(            N++;) s
+5 617 M
+(        }) s
+5 608 M
+(        double x[] = new double[N];) s
+5 599 M
+(        double y[] = new double[N];) s
+5 581 M
+(        int j=0;) s
+5 572 M
+(        for \(Iterator vit= vset.iterator\(\); vit.hasNext\(\); \) {) s
+5 563 M
+(            Vertex vquery_g = \(Vertex\)vit.next\(\);) s
+5 554 M
+(            // if we don't have completion data skip it) s
+5 545 M
+(            if \(get_count\(vquery_g\)<1.0\) {) s
+5 536 M
+(                continue;) s
+5 527 M
+(            }) s
+5 518 M
+(            try {) s
+5 509 M
+(                x[j]=get_grank\(vquery_g\);) s
+5 500 M
+(                y[j]=get_crank\(vquery_g\);) s
+5 491 M
+(                j++;) s
+5 482 M
+(            }) s
+5 473 M
+(            catch \(Exception ex\) {) s
+5 464 M
+(                System.out.printf\("Invariant violation!"\);) s
+5 455 M
+(                System.exit\(0\);) s
+5 446 M
+(            }) s
+5 437 M
+(        }) s
+5 419 M
+(        double sum_sq_x = 0;) s
+5 410 M
+(        double sum_sq_y = 0;) s
+5 401 M
+(        double sum_coproduct = 0;) s
+5 392 M
+(        double mean_x = x[1];) s
+5 383 M
+(        double mean_y = y[1];) s
+5 374 M
+(        for \(int i=2; i<N; i++\) {) s
+5 365 M
+(            double sweep = \(i - 1.0\) / i;) s
+5 356 M
+(            double delta_x = x[i] - mean_x;) s
+5 347 M
+(            double delta_y = y[i] - mean_y;) s
+5 338 M
+(            sum_sq_x += delta_x * delta_x * sweep;) s
+5 329 M
+(            sum_sq_y += delta_y * delta_y * sweep;) s
+5 320 M
+(            sum_coproduct += delta_x * delta_y * sweep;) s
+5 311 M
+(            mean_x += delta_x / i;) s
+5 302 M
+(            mean_y += delta_y / i;) s
+5 293 M
+(        }) s
+5 284 M
+(        double pop_sd_x = Math.sqrt\( sum_sq_x / \(double\)N \);) s
+5 275 M
+(        double pop_sd_y = Math.sqrt\( sum_sq_y / \(double\)N \);) s
+5 266 M
+(        double cov_x_y = sum_coproduct / \(double\)N;) s
+5 257 M
+(        double correlation = cov_x_y / \(pop_sd_x * pop_sd_y\);) s
+5 248 M
+(        return correlation;) s
+5 239 M
+(    }) s
+5 230 M
+(}) s
+_R
+S
+%%Page: (1) 28
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 1 def
+/fname (Test.java) def
+/fdir () def
+/ftail (Test.java) def
+% User defined strings:
+/fmodstr (Thu Aug 09 18:05:51 2007) def
+/pagenumstr (1) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 689 M
+(package netsci;) s
+5 671 M
+(import edu.uci.ics.jung.algorithms.transformation.*;) s
+5 662 M
+(import edu.uci.ics.jung.io.*;) s
+5 653 M
+(import edu.uci.ics.jung.graph.*;) s
+5 644 M
+(import edu.uci.ics.jung.algorithms.cluster.*;) s
+5 635 M
+(import java.io.*;) s
+5 626 M
+(import java.util.*;) s
+5 617 M
+(import java.text.DecimalFormat;) s
+5 599 M
+(/**) s
+5 590 M
+( * Test driver class for the NetSci) s
+5 581 M
+( * ) s
+5 572 M
+( * @version     $$) s
+5 563 M
+( * @author      Bilal Khan) s
+5 554 M
+( */) s
+5 545 M
+(public class Test {) s
+5 527 M
+(    // debugging) s
+5 518 M
+(    protected static final boolean DEBUG = true;) s
+5 500 M
+(    // number of seeds) s
+5 491 M
+(    private static int NUM_SEEDS = 10;) s
+5 473 M
+(    // number of RDS trees to make) s
+5 464 M
+(    private static int NUM_RDS_TREES = 10;) s
+5 446 M
+(    // the number of completions for each RDS tree) s
+5 437 M
+(    private static int NUM_COMPLETIONS = 10;) s
+5 419 M
+(    // the number of snapshots) s
+5 410 M
+(    private static int NUM_SNAPSHOTS = 1;) s
+5 392 M
+(    // biased RDS and Completions) s
+5 383 M
+(    private static boolean BIASED = false;) s
+5 365 M
+(    // the experiment) s
+5 356 M
+(    private static String EXPERIMENT = "unknown";) s
+5 338 M
+(    // string formatter) s
+5 329 M
+(    public static DecimalFormat twoPlaces = new DecimalFormat\("0.00000"\);) s
+5 311 M
+(    // statistics collector) s
+5 302 M
+(    private static Stats _stats = new Stats\(\);) s
+5 284 M
+(    /**) s
+5 275 M
+(     * Main class) s
+5 266 M
+(     *) s
+5 257 M
+(     * @param args -- an array of arguments that are passed in on the command line.) s
+5 248 M
+(     */) s
+5 230 M
+(    // static method that defines the graph parameter we want to study) s
+5 221 M
+(    private static Measurable makeMeasurable\(Graph graph\) {) s
+5 212 M
+(        if \(EXPERIMENT.equals\("H"\)\) return new MeasurableHubness\(graph\);) s
+5 203 M
+(        else if \(EXPERIMENT.equals\("A"\)\) return new MeasurableAuthority\(graph\);) s
+5 194 M
+(        else if \(EXPERIMENT.equals\("BC"\)\) return new MeasurableBCRaw\(graph\);) s
+5 185 M
+(        else if \(EXPERIMENT.equals\("ES"\)\) return new MeasurableEffectiveSize\(graph\);) s
+5 176 M
+(        else if \(EXPERIMENT.equals\("CON"\)\) return new MeasurableConstraint\(graph\);) s
+5 167 M
+(        else {) s
+5 158 M
+(            System.out.println\("Unknown experiment: "+EXPERIMENT\);) s
+5 149 M
+(            System.exit\(0\);) s
+5 140 M
+(        }) s
+5 131 M
+(        return null;) s
+5 122 M
+(    }) s
+5 104 M
+(    // static method that defines how we build RDS trees) s
+5 95 M
+(    private static Iterator makeRDSIterator\(Graph graph, int seeds\) {) s
+5 86 M
+(        if \(BIASED\) {) s
+5 77 M
+(            return RDSBiased.iterator\(graph, seeds\);) s
+5 68 M
+(        }) s
+5 59 M
+(        else {) s
+5 50 M
+(            return RDS.iterator\(graph, seeds\);) s
+5 41 M
+(        }) s
+5 32 M
+(    }) s
+5 14 M
+(    // static method that defines how we build completions) s
+5 5 M
+(    private static Iterator makeCompletionIterator\(RDS rds, Graph g\) {) s
+_R
+S
+%%Page: (2) 29
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 2 def
+/fname (Test.java) def
+/fdir () def
+/ftail (Test.java) def
+% User defined strings:
+/fmodstr (Thu Aug 09 18:05:51 2007) def
+/pagenumstr (2) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 689 M
+(        if \(BIASED\) {) s
+5 680 M
+(            return CompletionBiased.iterator\(rds, g\);) s
+5 671 M
+(        }) s
+5 662 M
+(        else {) s
+5 653 M
+(            return Completion.iterator\(rds, g\);) s
+5 644 M
+(        }) s
+5 635 M
+(    }) s
+5 617 M
+(    public static void main\(String [] args\) {) s
+5 599 M
+(        if \(args.length!=6\) {) s
+5 590 M
+(            System.out.println\("Usage: <filename> <numSeeds> <numRDStrees> <numCompletions> <biased> <exp>"\);) s
+5 581 M
+(            System.out.println\("biased: 0/1"\);) s
+5 572 M
+(            System.out.println\("exp: H, A, BC, ES, CON"\);) s
+5 563 M
+(        }) s
+5 545 M
+(        String fname = args[0];) s
+5 536 M
+(        String NUM_SEEDSStr = args[1];) s
+5 527 M
+(        String NUM_RDS_TREESStr = args[2];) s
+5 518 M
+(        String NUM_COMPLETIONSStr = args[3];) s
+5 509 M
+(        String BIASEDStr = args[4];) s
+5 491 M
+(        NUM_SEEDS = Integer.parseInt\(NUM_SEEDSStr\);) s
+5 482 M
+(        NUM_RDS_TREES = Integer.parseInt\(NUM_RDS_TREESStr\);) s
+5 473 M
+(        NUM_COMPLETIONS = Integer.parseInt\(NUM_COMPLETIONSStr\);) s
+5 464 M
+(        int tmpBIASED = Integer.parseInt\(BIASEDStr\);) s
+5 455 M
+(        if \(tmpBIASED==1\) {) s
+5 446 M
+(            BIASED = true;) s
+5 437 M
+(        }) s
+5 428 M
+(        else {) s
+5 419 M
+(            BIASED = false;) s
+5 410 M
+(        }) s
+5 401 M
+(        EXPERIMENT = args[5];) s
+5 392 M
+(        ) s
+5 383 M
+(        long stage = 0;) s
+5 374 M
+(        long maxstage = NUM_RDS_TREES * NUM_COMPLETIONS; ) s
+5 365 M
+(        long blip = maxstage / NUM_SNAPSHOTS;) s
+5 356 M
+(        if \(blip<1\) blip=1;) s
+5 338 M
+(        if \(DEBUG\) System.out.println\("Begin reading: "+fname\);) s
+5 329 M
+(        try {) s
+5 320 M
+(            PajekNetReader pnr = new PajekNetReader\(\);) s
+5 311 M
+(            Graph g = pnr.load\(fname\);) s
+5 302 M
+(            int v = g.numVertices\(\);) s
+5 293 M
+(            int e = g.numEdges\(\);) s
+5 284 M
+(            if \(DEBUG\) System.out.println\("Done reading graph: "+fname\);) s
+5 275 M
+(            if \(DEBUG\) System.out.println\("Graph specs: vertices="+v+", edges="+e\);) s
+5 266 M
+(            // if \(DEBUG\) debugOutput\(g\);) s
+5 248 M
+(            // undirectify the graph) s
+5 239 M
+(            g = undirectify\(g\);) s
+5 221 M
+(            // compute measures for vertices in the graph) s
+5 212 M
+(            Measurable measG = makeMeasurable\(g\);) s
+5 203 M
+(            for \(Iterator vit= g.getVertices\(\).iterator\(\); vit.hasNext\(\); \) {) s
+5 194 M
+(                Vertex vquery_g = \(Vertex\)vit.next\(\);) s
+5 185 M
+(                double val1 = measG.readValue\(vquery_g\);) s
+5 176 M
+(                _stats.initialize\(vquery_g, val1\);) s
+5 167 M
+(            }) s
+5 149 M
+(            int rds_ct = 1;) s
+5 140 M
+(            // iterate over RDS trees) s
+5 131 M
+(            for \(Iterator it = makeRDSIterator\(g,NUM_SEEDS\); it.hasNext\(\);\) {) s
+5 122 M
+(                // get the next RDS tree) s
+5 113 M
+(                RDS rds = \(RDS\)it.next\(\);) s
+5 104 M
+(                if \(DEBUG\) System.out.println\(""+rds.toString\(\)\);) s
+5 86 M
+(                int comp_ct = 1;) s
+5 77 M
+(                // iterate over completions) s
+5 68 M
+(                for \(Iterator it2 = makeCompletionIterator\(rds,g\); it2.hasNext\(\);\) {) s
+5 59 M
+(                    // get the next completion) s
+5 50 M
+(                    Completion comp = \(Completion\)it2.next\(\);) s
+5 41 M
+(                    if \(DEBUG\) System.out.println\(""+comp.toString\(\)\);) s
+5 23 M
+(                    // make the measurement apparatus) s
+5 14 M
+(                    Measurable measComp = makeMeasurable\(comp._completion\);) s
+_R
+S
+%%Page: (3) 30
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 3 def
+/fname (Test.java) def
+/fdir () def
+/ftail (Test.java) def
+% User defined strings:
+/fmodstr (Thu Aug 09 18:05:51 2007) def
+/pagenumstr (3) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 689 M
+(                    // now take measurements of each vertex in the completion) s
+5 680 M
+(                    for \(Iterator vit= g.getVertices\(\).iterator\(\); vit.hasNext\(\); \) {) s
+5 671 M
+(                        // for each vertex in G) s
+5 662 M
+(                        Vertex vquery_g = \(Vertex\)vit.next\(\);) s
+5 653 M
+(                        Vertex vquery_r = rds.getRDSVertex\(vquery_g\);) s
+5 644 M
+(                        if \(vquery_r==null\) {) s
+5 635 M
+(                            // only consider vertices also in the RDS tree) s
+5 626 M
+(                            continue;) s
+5 617 M
+(                        }) s
+5 608 M
+(                        ) s
+5 599 M
+(                        // compute measures for vertices in the completion) s
+5 590 M
+(                        Vertex vquery_c = comp.getCompletionVertex\(vquery_r\);) s
+5 581 M
+(                        double val3 = measComp.readValue\(vquery_c\);) s
+5 572 M
+(                        _stats.accum\(vquery_g, val3\);) s
+5 563 M
+(                    }) s
+5 545 M
+(                    WeakComponentClusterer wcc = new WeakComponentClusterer\(\);) s
+5 536 M
+(                    ClusterSet cs = wcc.extract\(comp._completion\);) s
+5 527 M
+(                    if \(DEBUG\) System.out.println\("Components = "+cs.size\(\)\);) s
+5 518 M
+(                    ) s
+5 509 M
+(                    stage++;) s
+5 500 M
+(                    if \(stage % blip == 0\) {) s
+5 491 M
+(                        // output aggregate statistics to a file every blip completions....) s
+5 482 M
+(                        output\(stage, g\);) s
+5 473 M
+(                    }) s
+5 455 M
+(                    comp_ct++;) s
+5 446 M
+(                    if \(comp_ct> NUM_COMPLETIONS \) {) s
+5 437 M
+(                        // done making completions) s
+5 428 M
+(                        break;) s
+5 419 M
+(                    }) s
+5 410 M
+(                }) s
+5 392 M
+(                rds_ct++;) s
+5 383 M
+(                if \(rds_ct> NUM_RDS_TREES \) {) s
+5 374 M
+(                    // done making RDS trees) s
+5 365 M
+(                    break;) s
+5 356 M
+(                }) s
+5 347 M
+(            }) s
+5 329 M
+(            // output the final aggregate statistics) s
+5 320 M
+(            output\(-1, g\);) s
+5 302 M
+(            // output the lift curve & pearson) s
+5 293 M
+(            outputError\(g\);) s
+5 284 M
+(            outputErrorPearson\(g\);) s
+5 275 M
+(        }) s
+5 266 M
+(        catch \(IOException ex\) {) s
+5 257 M
+(            System.out.println\("I/O error: "+ex\);) s
+5 248 M
+(        }) s
+5 239 M
+(    }) s
+5 221 M
+(    public static void outputError\(Graph g\) {) s
+5 212 M
+(        try {) s
+5 203 M
+(            String logname = "output."+NUM_SEEDS+"."+NUM_RDS_TREES+"."+NUM_COMPLETIONS+".error";) s
+5 194 M
+(            BufferedWriter out = new BufferedWriter\(new FileWriter\(logname\)\);) s
+5 185 M
+(            for \(double th=0.5; th<1.0; th+=0.05\) {) s
+5 176 M
+(                out.write\(_stats.error\(g, th\)+"\\n"\);) s
+5 167 M
+(            }) s
+5 158 M
+(            out.close\(\);) s
+5 149 M
+(        } catch \(IOException ex\) {) s
+5 140 M
+(        } ) s
+5 131 M
+(    }) s
+5 113 M
+(    public static void outputErrorPearson\(Graph g\) {) s
+5 104 M
+(        try {) s
+5 95 M
+(            String logname = "output."+NUM_SEEDS+"."+NUM_RDS_TREES+"."+NUM_COMPLETIONS+".pearson";) s
+5 86 M
+(            BufferedWriter out = new BufferedWriter\(new FileWriter\(logname\)\);) s
+5 77 M
+(            out.write\("r = "+twoPlaces.format\(_stats.pearson\(g\)\)\);) s
+5 68 M
+(            out.close\(\);) s
+5 59 M
+(        } catch \(IOException ex\) {) s
+5 50 M
+(        } ) s
+5 41 M
+(    }) s
+5 23 M
+(    public static void output\(long stage, Graph g\) {) s
+5 14 M
+(        try {) s
+5 5 M
+(            String logname;) s
+_R
+S
+%%Page: (4) 31
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 4 def
+/fname (Test.java) def
+/fdir () def
+/ftail (Test.java) def
+% User defined strings:
+/fmodstr (Thu Aug 09 18:05:51 2007) def
+/pagenumstr (4) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 689 M
+(            if \(stage<0\) {) s
+5 680 M
+(                logname = "output."+NUM_SEEDS+"."+NUM_RDS_TREES+"."+NUM_COMPLETIONS+"-final";) s
+5 671 M
+(            }) s
+5 662 M
+(            else {) s
+5 653 M
+(                logname = "output."+NUM_SEEDS+"."+NUM_RDS_TREES+"."+NUM_COMPLETIONS+"-"+stage;) s
+5 644 M
+(            }) s
+5 626 M
+(            BufferedWriter out = new BufferedWriter\(new FileWriter\(logname\)\);) s
+5 617 M
+(            for \(Iterator vit= g.getVertices\(\).iterator\(\); vit.hasNext\(\); \) {) s
+5 608 M
+(                Vertex vquery_g = \(Vertex\)vit.next\(\);) s
+5 599 M
+(                double grank = _stats.get_grank\(vquery_g\);) s
+5 590 M
+(                double crank;) s
+5 581 M
+(                double ctr =  _stats.get_count\(vquery_g\);) s
+5 572 M
+(                try {) s
+5 563 M
+(                    crank = _stats.get_crank\(vquery_g\);) s
+5 554 M
+(                }) s
+5 545 M
+(                catch \(Exception ex2\) {) s
+5 536 M
+(                    // skip the vertex for which we have no data) s
+5 527 M
+(                    continue;) s
+5 518 M
+(                }) s
+5 509 M
+(                double diff = Math.abs\(crank-grank\);) s
+5 500 M
+(                out.write\(""+) s
+5 491 M
+(                          twoPlaces.format\(diff\)+"\\t"+) s
+5 482 M
+(                          twoPlaces.format\(ctr\)+"\\t"+) s
+5 473 M
+(                          twoPlaces.format\(grank\)+"\\t"+) s
+5 464 M
+(                          twoPlaces.format\(crank\)+"\\t"+) s
+5 455 M
+(                          vquery_g+"\\n"\);) s
+5 446 M
+(            }) s
+5 437 M
+(            out.close\(\);) s
+5 428 M
+(        } catch \(IOException ex\) {) s
+5 419 M
+(        } ) s
+5 410 M
+(    }) s
+5 392 M
+(    public static void debugOutput\(Graph g\) {) s
+5 383 M
+(        for \(Iterator vit= g.getVertices\(\).iterator\(\); vit.hasNext\(\); \) {) s
+5 374 M
+(            Vertex vquery_g = \(Vertex\)vit.next\(\);) s
+5 365 M
+(            if \(vquery_g.inDegree\(\) != vquery_g.outDegree\(\)\) {) s
+5 356 M
+(                System.out.print\("***"\);) s
+5 347 M
+(            }) s
+5 338 M
+(            System.out.println\(" "+vquery_g+" in="+vquery_g.inDegree\(\)+" out="+vquery_g.outDegree\(\)\);) s
+5 329 M
+(        }) s
+5 320 M
+(        System.exit\(0\);) s
+5 311 M
+(    }) s
+5 293 M
+(    public static Graph undirectify\(Graph g\) {) s
+5 284 M
+(        // duplicate vertices) s
+5 275 M
+(        return DirectionTransformer.toUndirected\(g, false\);) s
+5 266 M
+(    }) s
+5 248 M
+(    public static Vertex getBigCompSeed\(Graph g\) {) s
+5 230 M
+(        Vertex bigcompSeed = null;) s
+5 221 M
+(        WeakComponentClusterer wccg = new WeakComponentClusterer\(\);) s
+5 212 M
+(        ClusterSet csg = wccg.extract\(g\);) s
+5 194 M
+(        int big = -1;) s
+5 185 M
+(        for \(Iterator itc=csg.iterator\(\); itc.hasNext\(\);\) {) s
+5 176 M
+(            Set clus = \(Set\)itc.next\(\);) s
+5 167 M
+(            if \(clus.size\(\) > big\) big = clus.size\(\);) s
+5 158 M
+(        }) s
+5 140 M
+(        for \(Iterator itc=csg.iterator\(\); itc.hasNext\(\);\) {) s
+5 131 M
+(            Set clus = \(Set\)itc.next\(\);) s
+5 122 M
+(            if \(clus.size\(\)==big\) {) s
+5 113 M
+(                Object[] varray = clus.toArray\(\);) s
+5 104 M
+(                int r = \(int\)\(Math.random\(\) * varray.length\);) s
+5 95 M
+(                bigcompSeed = \(Vertex\)varray[r];) s
+5 86 M
+(                if \(DEBUG\) System.out.println\("seed "+bigcompSeed+" has cluster size "+big\);) s
+5 77 M
+(                break;) s
+5 68 M
+(            }) s
+5 59 M
+(        }) s
+5 50 M
+(        return bigcompSeed;) s
+5 41 M
+(    }) s
+5 32 M
+(};) s
+_R
+S
+%%Page: (1) 32
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 1 def
+/fname (patch.sh) def
+/fdir () def
+/ftail (patch.sh) def
+% User defined strings:
+/fmodstr (Fri Aug 10 05:20:51 2007) def
+/pagenumstr (1) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 689 M
+(#!/bin/csh -f) s
+5 680 M
+(set F = `ls *.png`) s
+5 671 M
+(gnuplot < gnuplot.script) s
+5 662 M
+(pngtopnm output.png > output.pnm) s
+5 653 M
+(pnmtops output.pnm > output.ps) s
+5 644 M
+(mv output.png $F) s
+5 635 M
+(cp $F ~/Desktop/RDS) s
+_R
+S
+%%Page: (1) 33
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 1 def
+/fname (run-fast.sh) def
+/fdir () def
+/ftail (run-fast.sh) def
+% User defined strings:
+/fmodstr (Fri Aug 10 06:17:20 2007) def
+/pagenumstr (1) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 689 M
+(#!/bin/csh -f) s
+5 680 M
+(set SEEDS = $1) s
+5 671 M
+(set TREES = $2) s
+5 662 M
+(set COMPS = $3) s
+5 653 M
+(set BIASED = $4) s
+5 644 M
+(set EXP = $5) s
+5 626 M
+(if \($BIASED == "0"\) then) s
+5 617 M
+(    set MODE = "Unbiased RDS/Completions") s
+5 608 M
+(endif) s
+5 599 M
+(if \($BIASED == "1"\) then) s
+5 590 M
+(    set MODE = "Biased RDS/Completions") s
+5 581 M
+(endif) s
+5 563 M
+(#----------------------------------------) s
+5 554 M
+(if \($EXP == "BC"\) then) s
+5 545 M
+(    set MEASURE = "Betweenness Centrality") s
+5 536 M
+(endif) s
+5 527 M
+(if \($EXP == "ES"\) then) s
+5 518 M
+(    set MEASURE = "Effective Size") s
+5 509 M
+(endif) s
+5 500 M
+(if \($EXP == "H"\) then) s
+5 491 M
+(    set MEASURE = "Hubness") s
+5 482 M
+(endif) s
+5 473 M
+(if \($EXP == "A"\) then) s
+5 464 M
+(    set MEASURE = "Authority") s
+5 455 M
+(endif) s
+5 446 M
+(if \($EXP == "CON"\) then) s
+5 437 M
+(    set MEASURE = "Constraint") s
+5 428 M
+(endif) s
+5 410 M
+(set TITLE = "Estimating $MEASURE w/ $MODE \($TREES trs x $COMPS cmps\)") s
+5 392 M
+(java -cp ./classes:lib/colt.jar:lib/jung-1.7.6.jar:lib/resolver.jar:lib/xercesImpl.jar:lib/xml-apis.jar:lib/c) s
+5 383 M
+(oncurrent.jar:lib/jung-1.7.6-src.jar:lib/serializer.jar:lib/xercesSamples.jar:lib/commons-collections-3.2.jar) s
+5 374 M
+(:lib/commons-collections-testframework-3.2.jar netsci.Test /home/bilal/dev/netsci/dyads.txt $SEEDS $TREES $CO) s
+5 365 M
+(MPS $BIASED $EXP) s
+5 347 M
+(set DIR = "exp-$EXP.$BIASED.$SEEDS.$TREES.$COMPS.dat") s
+5 329 M
+(mkdir -p $DIR) s
+5 311 M
+(set PEARSON = `cat output.$SEEDS.$TREES.$COMPS.pearson`) s
+5 293 M
+(mv "output.$SEEDS.$TREES.$COMPS.error" $DIR) s
+5 284 M
+(mv "output.$SEEDS.$TREES.$COMPS.pearson" $DIR) s
+5 266 M
+(foreach F \(`ls output.$SEEDS.$TREES.$COMPS-*`\) ) s
+5 257 M
+(    cat $F | sort -k 1 -n > $F.sorted) s
+5 248 M
+(    mv $F.sorted $F) s
+5 239 M
+(    mv $F "$DIR") s
+5 230 M
+(end) s
+5 212 M
+(cd $DIR) s
+5 203 M
+(cat "output.$SEEDS.$TREES.$COMPS.pearson" | sed -e 's/r = //' > "output.$SEEDS.$TREES.$COMPS.pearson2") s
+5 194 M
+(echo "" >> "output.$SEEDS.$TREES.$COMPS.pearson2") s
+_R
+S
+%%Page: (1) 34
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 1 def
+/fname (run.sh) def
+/fdir () def
+/ftail (run.sh) def
+% User defined strings:
+/fmodstr (Thu Aug 09 18:00:25 2007) def
+/pagenumstr (1) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 689 M
+(#!/bin/csh -f) s
+5 680 M
+(set SEEDS = $1) s
+5 671 M
+(set TREES = $2) s
+5 662 M
+(set COMPS = $3) s
+5 653 M
+(set BIASED = $4) s
+5 644 M
+(set EXP = $5) s
+5 626 M
+(if \($BIASED == "0"\) then) s
+5 617 M
+(    set MODE = "Unbiased RDS/Completions") s
+5 608 M
+(endif) s
+5 599 M
+(if \($BIASED == "1"\) then) s
+5 590 M
+(    set MODE = "Biased RDS/Completions") s
+5 581 M
+(endif) s
+5 563 M
+(#----------------------------------------) s
+5 554 M
+(if \($EXP == "BC"\) then) s
+5 545 M
+(    set MEASURE = "Betweenness Centrality") s
+5 536 M
+(endif) s
+5 527 M
+(if \($EXP == "ES"\) then) s
+5 518 M
+(    set MEASURE = "Effective Size") s
+5 509 M
+(endif) s
+5 500 M
+(if \($EXP == "H"\) then) s
+5 491 M
+(    set MEASURE = "Hubness") s
+5 482 M
+(endif) s
+5 473 M
+(if \($EXP == "A"\) then) s
+5 464 M
+(    set MEASURE = "Authority") s
+5 455 M
+(endif) s
+5 446 M
+(if \($EXP == "CON"\) then) s
+5 437 M
+(    set MEASURE = "Constraint") s
+5 428 M
+(endif) s
+5 410 M
+(set TITLE = "Estimating $MEASURE w/ $MODE \($TREES trs x $COMPS cmps\)") s
+5 392 M
+(java -cp ./classes:lib/colt.jar:lib/jung-1.7.6.jar:lib/resolver.jar:lib/xercesImpl.jar:lib/xml-apis.jar:lib/c) s
+5 383 M
+(oncurrent.jar:lib/jung-1.7.6-src.jar:lib/serializer.jar:lib/xercesSamples.jar:lib/commons-collections-3.2.jar) s
+5 374 M
+(:lib/commons-collections-testframework-3.2.jar netsci.Test /home/bilal/dev/netsci/dyads.txt $SEEDS $TREES $CO) s
+5 365 M
+(MPS $BIASED $EXP) s
+5 347 M
+(set DIR = "exp-$EXP.$BIASED.$SEEDS.$TREES.$COMPS.dat") s
+5 329 M
+(mkdir -p $DIR) s
+5 311 M
+(set PEARSON = `cat output.$SEEDS.$TREES.$COMPS.pearson`) s
+5 293 M
+(mv "output.$SEEDS.$TREES.$COMPS.error" $DIR) s
+5 284 M
+(mv "output.$SEEDS.$TREES.$COMPS.pearson" $DIR) s
+5 266 M
+(echo "set terminal png" > "$DIR"/gnuplot.script) s
+5 257 M
+(echo "set output "\\""output.png"\\""" >> "$DIR"/gnuplot.script) s
+5 248 M
+(echo "set xlabel "\\""Actual $MEASURE"\\""" >> "$DIR"/gnuplot.script) s
+5 239 M
+(echo "set ylabel "\\""Estimated $MEASURE"\\""" >> "$DIR"/gnuplot.script) s
+5 230 M
+(echo "set title "\\""$TITLE"\\""" >> "$DIR"/gnuplot.script) s
+5 221 M
+(echo "plot "\\""output.$SEEDS.$TREES.$COMPS-final"\\"" using 3:4 title "\\""$PEARSON"\\""" >> "$DIR"/gnuplot.scri) s
+5 212 M
+(pt) s
+5 194 M
+(foreach F \(`ls output.$SEEDS.$TREES.$COMPS-*`\) ) s
+5 185 M
+(    cat $F | sort -k 1 -n > $F.sorted) s
+5 176 M
+(    mv $F.sorted $F) s
+5 167 M
+(    mv $F "$DIR") s
+5 158 M
+(end) s
+5 140 M
+(cd "$DIR") s
+5 131 M
+(gnuplot < gnuplot.script) s
+5 113 M
+(pngtopnm output.png > output.pnm) s
+5 104 M
+(pnmtops output.pnm > output.ps) s
+5 95 M
+(echo "Done") s
+5 77 M
+(mv output.png "$EXP-$BIASED-$SEEDS-$TREES-$COMPS.png") s
+5 59 M
+(evince output.ps) s
+_R
+S
+%%Page: (1) 35
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 1 def
+/fname (super-run.sh) def
+/fdir () def
+/ftail (super-run.sh) def
+% User defined strings:
+/fmodstr (Fri Aug 10 06:21:08 2007) def
+/pagenumstr (1) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 689 M
+(#!/bin/csh -f) s
+5 680 M
+(set SEEDS = $1) s
+5 671 M
+(set TREES = $2) s
+5 662 M
+(set COMPS = $3) s
+5 653 M
+(set BIASED = $4) s
+5 644 M
+(set EXP = $5) s
+5 626 M
+(set DIR = "exp-$EXP.$BIASED.$SEEDS.$TREES.$COMPS.dat") s
+5 617 M
+(mkdir -p $DIR) s
+5 608 M
+(rm -f $DIR/rds-trees) s
+5 599 M
+(touch -f $DIR/rds-trees) s
+5 581 M
+(foreach i \(1 2 3 4 5 6 7 8 9 10\)) s
+5 572 M
+(    ./run-fast.sh $*) s
+5 563 M
+(    cat $DIR/*.pearson2 >> $DIR/rds-trees) s
+5 554 M
+(end) s
+5 536 M
+( ./summary < $DIR/rds-trees > $DIR/rds-stats) s
+5 518 M
+(cat $DIR/rds-stats) s
+_R
+S
+%%Page: (1) 36
+%%BeginPageSetup
+_S
+38 24 translate
+/pagenum 1 def
+/fname (Makefile) def
+/fdir () def
+/ftail (Makefile) def
+% User defined strings:
+/fmodstr (Fri Aug 10 06:16:29 2007) def
+/pagenumstr (1) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+5 680 M
+(all:    summary) s
+5 671 M
+(        javac -d ./classes -classpath lib/colt.jar:lib/jung-1.7.6.jar:lib/resolver.jar:lib/xercesImpl.jar:lib) s
+5 662 M
+(/xml-apis.jar:lib/concurrent.jar:lib/jung-1.7.6-src.jar:lib/serializer.jar:lib/xercesSamples.jar:lib/commons-) s
+5 653 M
+(collections-3.2.jar:lib/commons-collections-testframework-3.2.jar RDS.java RDSBiased.java Test.java Completio) s
+5 644 M
+(n.java CompletionBiased.java Measurable.java MeasurableBC.java MeasurableBCRaw.java MeasurableEffectiveSize.j) s
+5 635 M
+(ava MeasurableHierarchy.java MeasurableConstraint.java MeasurableAggregateConstraint.java MeasurableHubness.j) s
+5 626 M
+(ava MeasurableAuthority.java Stats.java) s
+5 608 M
+(summary:        summary.c) s
+5 599 M
+(        gcc summary.c -o summary -lm) s
+5 581 M
+(run:) s
+5 572 M
+(        java -cp ./classes:lib/colt.jar:lib/jung-1.7.6.jar:lib/resolver.jar:lib/xercesImpl.jar:lib/xml-apis.j) s
+5 563 M
+(ar:lib/concurrent.jar:lib/jung-1.7.6-src.jar:lib/serializer.jar:lib/xercesSamples.jar:lib/commons-collections) s
+5 554 M
+(-3.2.jar:lib/commons-collections-testframework-3.2.jar netsci.Test /home/bilal/dev/netsci/dyads.txt) s
+5 536 M
+(demo:) s
+5 527 M
+(        java -cp ./classes:lib/colt.jar:lib/jung-1.7.6.jar:lib/resolver.jar:lib/xercesImpl.jar:lib/xml-apis.j) s
+5 518 M
+(ar:lib/concurrent.jar:lib/jung-1.7.6-src.jar:lib/serializer.jar:lib/xercesSamples.jar:lib/commons-collections) s
+5 509 M
+(-3.2.jar:lib/commons-collections-testframework-3.2.jar samples.graph.GraphEditorDemo 5 5) s
+5 491 M
+(tidy:) s
+5 482 M
+(        rm *~;) s
+5 464 M
+(clean:) s
+5 455 M
+(        rm -rf ./classes/*;) s
+_R
+S
+%%Trailer
+%%Pages: 36
+%%DocumentNeededResources: font Courier-Bold Courier 
+%%EOF

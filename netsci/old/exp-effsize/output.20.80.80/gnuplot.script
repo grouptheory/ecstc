@@ -1,0 +1,6 @@
+set terminal postscript portrait noenhanced monochrome
+set output "output.ps"
+set xlabel "actual effective size"
+set ylabel "estimated effective size"
+set title "20.80.80"
+plot "output.20.80.80-final" using 3:4 title "20.80.80"

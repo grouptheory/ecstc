@@ -1,0 +1,6 @@
+set terminal png
+set output "output.png"
+set xlabel "actual constraint"
+set ylabel "estimated constraint"
+set title "Biased RDS/Completion (100 trees x 100 comps)"
+plot "output.10.1.1-1" using 3:4 title "mean constraint"

@@ -1,0 +1,26 @@
+
+PEARSON = Pearson Coefficient of true (x) versus estimated (y)
+
+MISCLASSIFICATION = % of n(n-1) pairs for which the relative order is
+reversed in the estimate.
+
+STD_MEAN = Mean (over all vertices) of the Means (over all trees) of
+the normalized Standard Deviation of the vertex's estimated measure
+(over the set of completions)--where the normalization is percentized
+(100) relative to mean of the vertex's estimates in the set of
+completions.
+
+STD_VERTEX_MEAN__STD = Standard deviation (over all vertices) of the
+Means (over all trees) of the normalized Standard Deviation of the
+vertex measures (over the set of completions)--where the normalization
+is percentized (100) relative to the mean of the estimates over the
+set of completions.
+
+WORST_VERTEX_MEAN__STD = the maximum (over all vertices) of the
+Means (over all trees) of the normalized Standard Deviation of the
+vertex measures (over the set of completions)--where the normalization
+is percentized (100) relative to the mean of the estimates over the
+set of completions.
+
+Note, in the above "Means (over all trees)" is a trivial computation
+when the number of trees is 1.

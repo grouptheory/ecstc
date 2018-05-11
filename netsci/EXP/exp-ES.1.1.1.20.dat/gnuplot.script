@@ -1,0 +1,6 @@
+set terminal png
+set output "output.png"
+set xlabel "Actual Effective Size"
+set ylabel "Estimated Effective Size"
+set title "Estimating Effective Size w/ Biased RDS/Completions (1k trs x 1k cmps)"
+plot "output.1.1.20-final" using 3:4 title "r = 0.98880"

@@ -1,0 +1,7 @@
+set terminal png medium monochrome 
+set output "betweennesscentrality.png"
+set xlabel "actual betweenness centrality"
+set ylabel "estimated betweenness centrality"
+f(x)=x
+set title "30.100.100"
+plot "output.30.100.100-final" using 3:4 title "30.100.100", f(x) title "y=x"

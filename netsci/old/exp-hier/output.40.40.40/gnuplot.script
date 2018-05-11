@@ -1,0 +1,6 @@
+set terminal postscript portrait noenhanced monochrome
+set output "output.ps"
+set xlabel "actual hierarchy"
+set ylabel "estimated hierarchy"
+set title "40.40.40"
+plot "output.40.40.40-final" using 3:4 title "40.40.40"

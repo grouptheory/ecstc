@@ -1,0 +1,6 @@
+set terminal png
+set output "output.png"
+set xlabel "Actual Betweenness Centrality"
+set ylabel "Estimated Betweenness Centrality"
+set title "Estimating Betweenness Centrality w/ Unbiased RDS/Completions (1k trs x 1k cmps)"
+plot "output.20.1.1-final" using 3:4 title "r = 0.84"

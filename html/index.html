@@ -1,0 +1,65 @@
+<HTML>
+   <HEAD>
+
+       <TITLE>ECSTC</TITLE>
+
+   </HEAD>
+
+   <BODY>
+
+<CENTER>
+<HR>
+ECSTC
+<HR>
+
+
+<FORM ACTION="ecstc.sh" METHOD="GET">
+<TABLE BORDER="1">
+  <TR>
+       <TD> RDS trees per graph: </TD>
+       <TD> <INPUT TYPE="TEXT" NAME="RDS"></TD>
+  </TR>
+  <TR>
+       <TD> Seeds per RDS tree: </TD>
+       <TD> <INPUT TYPE="TEXT" NAME="SEEDS"></TD>
+  </TR>
+  <TR>
+       <TD> Completions per RDS tree: </TD>
+       <TD> <INPUT TYPE="TEXT" NAME="COMP"></TD>
+  </TR>
+  <TR>
+       <TD> Random number seed: </TD>
+       <TD> <INPUT TYPE="TEXT" NAME="RNGSEED"></TD>
+  </TR>
+</TABLE>
+
+<BR>Measures:<BR>
+
+<TABLE BORDER="1">
+       <TR><TD> Betweenness Centrality </TD><TD><INPUT TYPE="checkbox" NAME="BC" VALUE="on"> </TD></TR>
+       <TR><TD> Effective Size </TD><TD><INPUT TYPE="checkbox" NAME="ES" VALUE="on"> </TD></TR>
+       <TR><TD> Shortest Path to Fixed Node </TD><TD><INPUT TYPE="checkbox" NAME="Dijkstra" VALUE="on"> </TD></TR>
+       <TR><TD> Hierarchy </TD><TD><INPUT TYPE="checkbox" NAME="HIER" VALUE="on"> </TD></TR>
+       <TR><TD> Constraint </TD><TD><INPUT TYPE="checkbox" NAME="CON" VALUE="on"> </TD></TR>
+</TABLE>
+
+<BR>Analysis (for each measure):<BR>
+
+<TABLE BORDER="1">
+       <TR><TD> Pearson's r </TD><TD><INPUT TYPE="checkbox" NAME="PEARSON" VALUE="on"> </TD></TR>
+       <TR><TD> Misclassification rate </TD><TD><INPUT TYPE="checkbox" NAME="MISCLASS" VALUE="on"> </TD></TR>
+       <TR><TD> Coverage </TD><TD><INPUT TYPE="checkbox" NAME="COVERAGE" VALUE="on"> </TD></TR>
+       <TR><TD> Slope </TD><TD><INPUT TYPE="checkbox" NAME="SLOPE" VALUE="on"> </TD></TR>
+</TABLE>
+
+<BR><BR>
+
+       <INPUT TYPE="SUBMIT" NAME="submit" VALUE="Process"> 
+
+     </FORM> 
+
+</CENTER>
+
+   </BODY>
+
+</HTML>

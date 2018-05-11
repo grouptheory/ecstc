@@ -1,0 +1,6 @@
+set terminal postscript portrait noenhanced monochrome
+set output "output.ps"
+set xlabel "actual relative betweenness rank"
+set ylabel "estimated relative betweenness rank"
+set title "20.10.10"
+plot "output.20.10.10-final" using 3:4 title "20.10.10"
